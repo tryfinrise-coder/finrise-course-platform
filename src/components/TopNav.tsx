@@ -48,7 +48,7 @@ export default async function TopNav() {
         ) : (
           <>
             <SoundToggle />
-            <Link href="/courses/candlestick-mastery" className="btn btn-ghost tap">
+            <Link href="/pages/candlestick-mastery" className="btn btn-ghost tap">
               The Course
             </Link>
             <Link href="/courses/login" className="btn btn-primary tap">

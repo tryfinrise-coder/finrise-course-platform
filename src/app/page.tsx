@@ -49,7 +49,7 @@ export default async function Home() {
             own hands.
           </p>
           <div style={{ display: "flex", gap: 12, justifyContent: "center", marginTop: 28 }}>
-            <Link href="/courses/candlestick-mastery" className="btn btn-primary">
+            <Link href="/pages/candlestick-mastery" className="btn btn-primary">
               Explore the course →
             </Link>
             <Link href="/courses/login" className="btn">
@@ -86,6 +86,75 @@ export default async function Home() {
           </p>
         </section>
       </main>
+
+      <footer style={{
+        borderTop: "1px solid var(--border)",
+        background: "var(--bg-2)",
+        padding: "3rem 1.25rem 4rem",
+        marginTop: "4rem",
+      }}>
+        <div style={{
+          maxWidth: "48rem",
+          margin: "0 auto",
+          textAlign: "center",
+          display: "flex",
+          flexDirection: "column",
+          gap: "1.25rem",
+          alignItems: "center",
+        }}>
+          {/* SEBI disclaimer */}
+          <p style={{
+            fontSize: "0.78rem",
+            color: "var(--muted)",
+            lineHeight: 1.6,
+            maxWidth: "36rem",
+            margin: 0,
+          }}>
+            Educational content only. Not investment advice. Finrise is not a
+            SEBI-registered adviser. Trading carries risk of capital loss.
+          </p>
+
+          {/* Legal nav links */}
+          <nav style={{
+            display: "flex",
+            flexWrap: "wrap",
+            justifyContent: "center",
+            gap: "0.5rem 1rem",
+          }}>
+            {[
+              { label: "About", href: "/about" },
+              { label: "Privacy Policy", href: "/privacy" },
+              { label: "Refund Policy", href: "/refund" },
+              { label: "Terms & Conditions", href: "/terms" },
+              { label: "Contact Us", href: "/contact" }
+            ].map((link, i, arr) => (
+              <span key={link.href} style={{ display: "inline-flex", alignItems: "center", gap: "1rem" }}>
+                <Link
+                  href={link.href}
+                  style={{
+                    fontSize: "0.82rem",
+                    color: "var(--muted)",
+                    fontWeight: 500,
+                    textDecoration: "none",
+                  }}
+                  className="hover-underline"
+                >
+                  {link.label}
+                </Link>
+                {i < arr.length - 1 && (
+                  <span style={{ color: "var(--faint)", fontSize: "0.75rem" }}>
+                    ·
+                  </span>
+                )}
+              </span>
+            ))}
+          </nav>
+
+          <p style={{ fontSize: "0.75rem", color: "var(--faint)", margin: 0 }}>
+            &copy; {new Date().getFullYear()} Finrise. All rights reserved.
+          </p>
+        </div>
+      </footer>
     </>
   );
 }
