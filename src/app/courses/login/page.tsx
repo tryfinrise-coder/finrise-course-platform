@@ -12,7 +12,9 @@ export default async function CoursesLoginPage({
 }) {
   const user = await getCurrentUser();
   if (user) {
-    redirect(searchParams.next || (user.role === "admin" ? "/admin" : "/dashboard"));
+    // /courses/login always lands on the student dashboard — never the admin panel.
+    // Admin users who click the student email link should reach /dashboard, not /admin.
+    redirect(searchParams.next || "/dashboard");
   }
   return <StudentLogin next={searchParams.next} />;
 }

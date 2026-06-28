@@ -5,6 +5,7 @@ import {
   IconSculptor,
   IconTrophy,
   IconLibrary,
+  IconGift,
   IconGauge,
   IconBox,
   IconUsers,
@@ -18,6 +19,7 @@ export type NavKey =
   | "achievements"
   | "leaderboard"
   | "library"
+  | "bonuses"
   | "admin"
   | "admin-products"
   | "admin-users"
@@ -28,6 +30,7 @@ const COURSE = "/courses/candlestick-mastery";
 const STUDENT = [
   { key: "dashboard", label: "Dashboard", href: "/dashboard", Icon: IconDashboard },
   { key: "course", label: "My Course", href: COURSE, Icon: IconCourse },
+  { key: "bonuses", label: "My Bonuses", href: "/bonuses", Icon: IconGift },
   { key: "sculptor", label: "Candle Sculptor", href: `${COURSE}/sculptor`, Icon: IconSculptor },
   { key: "achievements", label: "Achievements", href: "/achievements", Icon: IconTrophy },
   { key: "library", label: "Library", href: "/library", Icon: IconLibrary },

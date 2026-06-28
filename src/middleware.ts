@@ -21,6 +21,7 @@ const PROTECTED = [
   "/download",
   "/achievements",
   "/leaderboard",
+  "/bonuses",
 ];
 
 // Always reachable without a session (prevents login redirect loops).

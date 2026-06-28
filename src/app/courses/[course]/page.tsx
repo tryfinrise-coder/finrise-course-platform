@@ -46,7 +46,6 @@ export default async function CoursePage({ params }: { params: { course: string 
     .filter((l) => !l.pattern_key)
     .sort((a, b) => a.sort_order - b.sort_order);
   const resources = await listResources(product.id);
-  const bonuses = resources.filter((r) => r.description_html);
   const plainResources = resources.filter((r) => !r.description_html);
   const meta = [
     { icon: GraduationCap, label: `${lessons.length} interactive lessons` },
@@ -89,57 +88,6 @@ export default async function CoursePage({ params }: { params: { course: string 
             </Link>
           </div>
         </div>
-
-        {/* bonus sub-sections — PDF + rich HTML description */}
-        {bonuses.length > 0 && (
-          <section>
-            <div className="mb-3">
-              <h2 className="text-lg font-bold text-slate-900">Bonuses &amp; resources</h2>
-              <p className="text-sm text-slate-500">Your free bonuses — read the details, then download.</p>
-            </div>
-            <div className="space-y-4">
-              {bonuses.map((r) => (
-                <div key={r.id} className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-[0_1px_2px_rgba(15,23,42,0.04)]">
-                  <div className="flex flex-wrap items-center gap-4 border-b border-slate-100 p-4 sm:p-5">
-                    {r.image_path ? (
-                      /* eslint-disable-next-line @next/next/no-img-element */
-                      <img src={`/download/resource/${r.id}?image=1`} alt="" className="h-14 w-14 shrink-0 rounded-xl object-cover" />
-                    ) : (
-                      <span className="grid h-14 w-14 shrink-0 place-items-center rounded-xl bg-rose-50">
-                        <svg width="30" height="30" viewBox="0 0 24 24" aria-hidden="true">
-                          <path d="M6 2h7l5 5v13a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2z" fill="#fff" stroke="#dc2626" strokeWidth="1.4" strokeLinejoin="round" />
-                          <path d="M13 2v5h5" fill="none" stroke="#dc2626" strokeWidth="1.4" strokeLinejoin="round" />
-                          <rect x="5.5" y="12.5" width="13" height="6.6" rx="1.4" fill="#dc2626" />
-                          <text x="12" y="17.5" fontSize="4.6" fontWeight="800" fill="#fff" textAnchor="middle" fontFamily="Arial, sans-serif">PDF</text>
-                        </svg>
-                      </span>
-                    )}
-                    <div className="min-w-0 flex-1">
-                      <div className="flex flex-wrap items-center gap-2">
-                        {r.badge && (
-                          <span className="rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-amber-700">{r.badge}</span>
-                        )}
-                        <h3 className="text-base font-bold text-slate-900">{r.title}</h3>
-                      </div>
-                      {r.summary && <p className="mt-0.5 text-sm text-slate-500">{r.summary}</p>}
-                    </div>
-                    <a
-                      href={`/download/resource/${r.id}`}
-                      className="inline-flex h-10 shrink-0 items-center gap-1.5 rounded-lg bg-emerald-600 px-4 text-sm font-semibold text-white transition-colors hover:bg-emerald-700"
-                    >
-                      <Download className="h-4 w-4" /> Download {(r.kind || "").toUpperCase()}
-                    </a>
-                  </div>
-                  {/* admin-authored HTML description (trusted input) */}
-                  <div
-                    className="resource-prose p-4 sm:p-5"
-                    dangerouslySetInnerHTML={{ __html: r.description_html as string }}
-                  />
-                </div>
-              ))}
-            </div>
-          </section>
-        )}
 
         {/* plain downloadable resources (no description) */}
         {plainResources.length > 0 && (
