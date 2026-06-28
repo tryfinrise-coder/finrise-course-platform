@@ -16,7 +16,7 @@ import {
   setUserPassword,
 } from "@/lib/users";
 import { generatePassword } from "@/lib/passwords";
-import { createDiscount, setDiscountActive, deleteDiscount } from "@/lib/discounts";
+import { createDiscount, setDiscountActive, deleteDiscount, updateDiscount } from "@/lib/discounts";
 import { createBundle } from "@/lib/bundles";
 
 function rupeesToPaise(v: FormDataEntryValue | null): number {
@@ -204,6 +204,7 @@ export async function createDiscountAction(formData: FormData) {
   const value = kind === "percent" ? Math.min(100, Math.max(0, Math.round(rawValue))) : Math.round(rawValue * 100);
   const maxUsesRaw = Number(formData.get("max_uses") || 0);
   const minOrderRaw = Number(formData.get("min_order") || 0);
+  const productIds = formData.getAll("product_ids").map((v) => Number(v)).filter(Boolean);
   await createDiscount({
     code,
     kind,
@@ -213,6 +214,32 @@ export async function createDiscountAction(formData: FormData) {
     starts_at: String(formData.get("starts_at") || "") || null,
     min_order: minOrderRaw > 0 ? Math.round(minOrderRaw * 100) : null,
     auto_apply: formData.get("auto_apply") === "on",
+    productIds,
+  });
+  revalidatePath("/admin/discounts");
+}
+
+export async function editDiscountAction(formData: FormData) {
+  await requireAdmin();
+  const id = Number(formData.get("id"));
+  const code = String(formData.get("code") || "").trim();
+  if (!id || !code) return;
+  const kind = formData.get("kind") === "fixed" ? "fixed" : "percent";
+  const rawValue = Number(formData.get("value") || 0);
+  const value = kind === "percent" ? Math.min(100, Math.max(0, Math.round(rawValue))) : Math.round(rawValue * 100);
+  const maxUsesRaw = Number(formData.get("max_uses") || 0);
+  const minOrderRaw = Number(formData.get("min_order") || 0);
+  const productIds = formData.getAll("product_ids").map((v) => Number(v)).filter(Boolean);
+  await updateDiscount(id, {
+    code,
+    kind,
+    value,
+    max_uses: maxUsesRaw > 0 ? maxUsesRaw : null,
+    expires_at: String(formData.get("expires_at") || "") || null,
+    starts_at: String(formData.get("starts_at") || "") || null,
+    min_order: minOrderRaw > 0 ? Math.round(minOrderRaw * 100) : null,
+    auto_apply: formData.get("auto_apply") === "on",
+    productIds,
   });
   revalidatePath("/admin/discounts");
 }

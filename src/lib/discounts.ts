@@ -20,6 +20,14 @@ export async function listDiscounts(): Promise<DiscountCode[]> {
   return query<DiscountCode>("SELECT * FROM discount_codes ORDER BY created_at DESC");
 }
 
+export async function getDiscountProductIds(discountId: number): Promise<number[]> {
+  const rows = await query<{ product_id: number }>(
+    "SELECT product_id FROM discount_products WHERE discount_id = ?",
+    [discountId]
+  );
+  return rows.map((r) => r.product_id);
+}
+
 export async function createDiscount(input: {
   code: string;
   kind: "percent" | "fixed";
@@ -29,6 +37,7 @@ export async function createDiscount(input: {
   starts_at?: string | null;
   min_order?: number | null;
   auto_apply?: boolean;
+  productIds?: number[];
 }): Promise<void> {
   await execute(
     `INSERT INTO discount_codes (code, kind, value, max_uses, expires_at, starts_at, min_order, auto_apply)
@@ -48,11 +57,66 @@ export async function createDiscount(input: {
       input.auto_apply ? 1 : 0,
     ]
   );
+
+  const d = await queryOne<{ id: number }>("SELECT id FROM discount_codes WHERE code = ?", [
+    input.code.trim().toUpperCase(),
+  ]);
+  if (d && input.productIds !== undefined) {
+    await execute("DELETE FROM discount_products WHERE discount_id = ?", [d.id]);
+    for (const pId of input.productIds) {
+      await execute("INSERT INTO discount_products (discount_id, product_id) VALUES (?, ?)", [
+        d.id,
+        pId,
+      ]);
+    }
+  }
+}
+
+export async function updateDiscount(
+  id: number,
+  input: {
+    code: string;
+    kind: "percent" | "fixed";
+    value: number;
+    max_uses?: number | null;
+    expires_at?: string | null;
+    starts_at?: string | null;
+    min_order?: number | null;
+    auto_apply?: boolean;
+    productIds?: number[];
+  }
+): Promise<void> {
+  await execute(
+    `UPDATE discount_codes
+     SET code = ?, kind = ?, value = ?, max_uses = ?, expires_at = ?, starts_at = ?, min_order = ?, auto_apply = ?
+     WHERE id = ?`,
+    [
+      input.code.trim().toUpperCase(),
+      input.kind,
+      input.value,
+      input.max_uses ?? null,
+      input.expires_at || null,
+      input.starts_at || null,
+      input.min_order ?? null,
+      input.auto_apply ? 1 : 0,
+      id,
+    ]
+  );
+
+  if (input.productIds !== undefined) {
+    await execute("DELETE FROM discount_products WHERE discount_id = ?", [id]);
+    for (const pId of input.productIds) {
+      await execute("INSERT INTO discount_products (discount_id, product_id) VALUES (?, ?)", [
+        id,
+        pId,
+      ]);
+    }
+  }
 }
 
 // The best auto-apply code that is live right now (and qualifies for the order
 // total, if given). Highest value wins. Returns null if none.
-export async function getAutoApplyDiscount(orderTotal?: number): Promise<DiscountCode | null> {
+export async function getAutoApplyDiscount(orderTotal?: number, productId?: number): Promise<DiscountCode | null> {
   const rows = await query<DiscountCode>(
     `SELECT * FROM discount_codes
      WHERE active = 1 AND auto_apply = 1
@@ -63,6 +127,10 @@ export async function getAutoApplyDiscount(orderTotal?: number): Promise<Discoun
   );
   for (const d of rows) {
     if (d.min_order != null && orderTotal != null && orderTotal < d.min_order) continue;
+    if (productId != null) {
+      const allowedIds = await getDiscountProductIds(d.id);
+      if (allowedIds.length > 0 && !allowedIds.includes(productId)) continue;
+    }
     return d;
   }
   return null;
@@ -80,7 +148,8 @@ export async function deleteDiscount(id: number): Promise<void> {
 // cap and (when an order total is supplied) the minimum-order requirement.
 export async function validateDiscount(
   code: string,
-  orderTotal?: number
+  orderTotal?: number,
+  productId?: number
 ): Promise<DiscountCode | null> {
   const d = await queryOne<DiscountCode>(
     `SELECT * FROM discount_codes
@@ -92,6 +161,10 @@ export async function validateDiscount(
   );
   if (!d) return null;
   if (d.min_order != null && orderTotal != null && orderTotal < d.min_order) return null;
+  if (productId != null) {
+    const allowedIds = await getDiscountProductIds(d.id);
+    if (allowedIds.length > 0 && !allowedIds.includes(productId)) return null;
+  }
   return d;
 }
 

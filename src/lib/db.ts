@@ -235,6 +235,15 @@ const SCHEMA: string[] = [
      FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE
    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4`,
 
+  // ---- discount products mapping ----
+  `CREATE TABLE IF NOT EXISTS discount_products (
+     discount_id INT NOT NULL,
+     product_id  INT NOT NULL,
+     PRIMARY KEY (discount_id, product_id),
+     FOREIGN KEY (discount_id) REFERENCES discount_codes(id) ON DELETE CASCADE,
+     FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE
+   ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4`,
+
   // additive migrations (re-runs fail harmlessly — runSchema swallows errors)
   `ALTER TABLE discount_codes ADD COLUMN starts_at DATE NULL`,
   `ALTER TABLE discount_codes ADD COLUMN min_order INT NULL`,
