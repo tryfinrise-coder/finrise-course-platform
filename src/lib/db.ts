@@ -209,15 +209,6 @@ const SCHEMA: string[] = [
      created_at  DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4`,
 
-  // additive migrations (re-runs fail harmlessly — runSchema swallows errors)
-  `ALTER TABLE discount_codes ADD COLUMN starts_at DATE NULL`,
-  `ALTER TABLE discount_codes ADD COLUMN min_order INT NULL`,
-  `ALTER TABLE discount_codes ADD COLUMN auto_apply TINYINT NOT NULL DEFAULT 0`,
-  `ALTER TABLE products ADD COLUMN hero_video VARCHAR(512) NULL`,
-  `ALTER TABLE course_resources ADD COLUMN description_html MEDIUMTEXT NULL`,
-  `ALTER TABLE course_resources ADD COLUMN badge VARCHAR(64) NULL`,
-  `ALTER TABLE course_resources ADD COLUMN sort_order INT NOT NULL DEFAULT 0`,
-
   // ---- analytics: file downloads ----
   `CREATE TABLE IF NOT EXISTS downloads (
      id         INT AUTO_INCREMENT PRIMARY KEY,
@@ -243,6 +234,15 @@ const SCHEMA: string[] = [
      KEY idx_res_product (product_id),
      FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE
    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4`,
+
+  // additive migrations (re-runs fail harmlessly — runSchema swallows errors)
+  `ALTER TABLE discount_codes ADD COLUMN starts_at DATE NULL`,
+  `ALTER TABLE discount_codes ADD COLUMN min_order INT NULL`,
+  `ALTER TABLE discount_codes ADD COLUMN auto_apply TINYINT NOT NULL DEFAULT 0`,
+  `ALTER TABLE products ADD COLUMN hero_video VARCHAR(512) NULL`,
+  `ALTER TABLE course_resources ADD COLUMN description_html MEDIUMTEXT NULL`,
+  `ALTER TABLE course_resources ADD COLUMN badge VARCHAR(64) NULL`,
+  `ALTER TABLE course_resources ADD COLUMN sort_order INT NOT NULL DEFAULT 0`,
 
   `CREATE INDEX idx_entitlements_user ON entitlements(user_id)`,
   `CREATE INDEX idx_lessons_product ON lessons(product_id)`,
