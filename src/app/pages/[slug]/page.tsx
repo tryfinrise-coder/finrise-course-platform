@@ -353,9 +353,10 @@ export default async function CourseSalesPage({
                 }}
               >
                 You open a chart and it looks like{" "}
-                <em className="not-italic" style={{ color: EMERALD }}>random noise.</em>{" "}
+                <em className="not-italic" style={{ color: "#F87171" }}>confusing.</em>
                 <br />
-                Let&rsquo;s fix that — permanently.
+                <em className="not-italic" style={{ color: "#FFFFFF" }}>Stop Guessing,</em>{" "}
+                <em className="not-italic" style={{ color: EMERALD }}>Start Reading.</em>
               </h1>
 
               {/* Sub-promise */}
