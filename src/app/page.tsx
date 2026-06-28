@@ -1,0 +1,91 @@
+import Link from "next/link";
+import TopNav from "@/components/TopNav";
+import { getProductBySlug } from "@/lib/products";
+import { formatPrice } from "@/lib/types";
+
+export const dynamic = "force-dynamic";
+
+export default async function Home() {
+  const course = await getProductBySlug("candlestick-mastery");
+
+  const features = [
+    {
+      title: "Living candles",
+      body: "Price moves in real time inside each forming candle — honoring the true open, high, low and close.",
+    },
+    {
+      title: "Bull vs Bear meter",
+      body: "A live pressure bar tilts toward buyers or sellers, making the fight tangible as the candle forms.",
+    },
+    {
+      title: "Pattern in context",
+      body: "See the trend leading in, the pattern itself, and the outcome after — never an isolated shape.",
+    },
+    {
+      title: "The Candle Sculptor",
+      body: "Drag open/high/low/close and the app names the pattern live as you reshape the candle.",
+    },
+    {
+      title: "Level up as you learn",
+      body: "Earn XP for every lesson, keep a daily streak alive, unlock badges, and climb the leaderboard.",
+    },
+  ];
+
+  return (
+    <>
+      <TopNav />
+      <main className="container" style={{ paddingTop: 64, paddingBottom: 80 }}>
+        <section style={{ textAlign: "center", maxWidth: 760, margin: "0 auto" }}>
+          <span className="badge" style={{ marginBottom: 18 }}>
+            ● Interactive · animated · no slideshows
+          </span>
+          <h1 style={{ fontSize: 52, lineHeight: 1.05 }}>
+            Learn candlesticks as{" "}
+            <span style={{ color: "var(--brand-2)" }}>living price action</span>.
+          </h1>
+          <p style={{ fontSize: 18, maxWidth: 620, margin: "16px auto 0" }}>
+            Finrise teaches candlestick patterns unlike anything else: watch each candle
+            build tick-by-tick, feel the buyer–seller pressure, and sculpt candles with your
+            own hands.
+          </p>
+          <div style={{ display: "flex", gap: 12, justifyContent: "center", marginTop: 28 }}>
+            <Link href="/courses/candlestick-mastery" className="btn btn-primary">
+              Explore the course →
+            </Link>
+            <Link href="/courses/login" className="btn">
+              I already bought it
+            </Link>
+          </div>
+          {course && (
+            <p className="faint" style={{ marginTop: 14, fontSize: 13 }}>
+              {course.title} · {formatPrice(course.price)}
+            </p>
+          )}
+        </section>
+
+        <section
+          className="grid"
+          style={{ gridTemplateColumns: "repeat(auto-fit, minmax(230px, 1fr))", marginTop: 64 }}
+        >
+          {features.map((f) => (
+            <div key={f.title} className="glass card-hover" style={{ padding: 22 }}>
+              <h3 style={{ fontSize: 17 }}>{f.title}</h3>
+              <p style={{ margin: 0, fontSize: 14 }}>{f.body}</p>
+            </div>
+          ))}
+        </section>
+
+        <section
+          className="glass"
+          style={{ padding: 28, marginTop: 40, textAlign: "center" }}
+        >
+          <h2 style={{ fontSize: 24 }}>Built to sell more than one thing</h2>
+          <p style={{ maxWidth: 620, margin: "8px auto 0" }}>
+            Courses, downloadable PDFs, videos, and bundles — all managed from a single admin
+            panel, all access-controlled. The candlestick course is just the first product.
+          </p>
+        </section>
+      </main>
+    </>
+  );
+}
