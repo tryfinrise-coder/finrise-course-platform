@@ -44,16 +44,7 @@ s.parentNode.insertBefore(t,s)}(window,document,'script',
 fbq('init','27615967504702056');
 fbq('track','PageView');`}
         </Script>
-        <noscript>
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            height="1"
-            width="1"
-            style={{ display: "none" }}
-            src="https://www.facebook.com/tr?id=27615967504702056&ev=PageView&noscript=1"
-            alt=""
-          />
-        </noscript>
+        <noscript dangerouslySetInnerHTML={{ __html: `<img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=27615967504702056&ev=PageView&noscript=1" alt="" />` }} />
       </body>
     </html>
   );
