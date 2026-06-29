@@ -7,6 +7,7 @@ import { formatPrice } from "@/lib/types";
 import { getAutoApplyDiscount } from "@/lib/discounts";
 import CheckoutButton from "@/components/checkout/CheckoutButton";
 import ReviewCarousel from "@/components/marketing/ReviewCarousel";
+import PixelEvent from "@/components/pixel/PixelEvent";
 
 export const dynamic = "force-dynamic";
 
@@ -260,6 +261,16 @@ export default async function CourseSalesPage({
       className={poppins.className}
       style={{ background: BG_INK, color: TEXT_BODY, minHeight: "100dvh" }}
     >
+      {/* ViewContent fires when someone lands on this sales page */}
+      <PixelEvent
+        event="ViewContent"
+        params={{
+          content_name: product.title,
+          content_category: "Course",
+          value: finalPrice / 100,
+          currency: "INR",
+        }}
+      />
       {/* ── Material Symbols font ──────────────────────────────── */}
       <link
         rel="stylesheet"

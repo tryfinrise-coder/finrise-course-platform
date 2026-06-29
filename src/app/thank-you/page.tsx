@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { Button } from "@/components/ui/button";
+import PixelEvent from "@/components/pixel/PixelEvent";
 
 export const metadata: Metadata = {
   title: "Thank you — Finrise",
@@ -8,9 +9,19 @@ export const metadata: Metadata = {
     "Your enrolment is being processed. We'll email your login details shortly.",
 };
 
-export default function ThankYouPage() {
+export default function ThankYouPage({
+  searchParams,
+}: {
+  searchParams: { amount?: string };
+}) {
+  const amount = Number(searchParams.amount || 199);
   return (
     <div className="flex min-h-dvh flex-col bg-background text-foreground">
+      {/* Purchase event fires once when buyer reaches this page */}
+      <PixelEvent
+        event="Purchase"
+        params={{ value: amount, currency: "INR", content_name: "Candlestick Mastery" }}
+      />
       {/* Minimal header */}
       <header className="border-b border-border bg-card">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-5 py-4">

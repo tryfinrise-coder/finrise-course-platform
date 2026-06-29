@@ -72,6 +72,11 @@ export default function CheckoutButton({
     setError(null);
     setLoading(true);
 
+    // Fire InitiateCheckout when user submits the form
+    if (typeof window !== "undefined" && (window as any).fbq) {
+      (window as any).fbq("track", "InitiateCheckout");
+    }
+
     try {
       const res = await fetch("/api/checkout", {
         method: "POST",
@@ -117,7 +122,8 @@ export default function CheckoutButton({
             });
             const j = await v.json();
             if (j.ok) {
-              window.location.href = "/thank-you";
+              const rupees = Math.round(data.amount / 100);
+              window.location.href = `/thank-you?amount=${rupees}`;
             } else {
               setError("Payment could not be verified.");
               setLoading(false);
