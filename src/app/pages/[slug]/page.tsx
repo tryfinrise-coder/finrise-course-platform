@@ -150,49 +150,80 @@ function HeroMedia({
   heroVideo: string | null;
   cover: string | null;
 }) {
-  const wrapperStyle: React.CSSProperties = {
+  /* padding-bottom trick: universal 16:9 that works in Instagram IAB,
+     old Android WebView, and every browser — aspect-ratio CSS does not. */
+  const outerStyle: React.CSSProperties = {
     borderRadius: "16px",
     border: "1px solid rgba(24,168,122,0.35)",
     overflow: "hidden",
     boxShadow: "0 0 40px rgba(24,168,122,0.18), 0 8px 32px rgba(0,0,0,0.45)",
     background: "#141A24",
-    aspectRatio: "16/9",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
+    position: "relative",
+    paddingBottom: "56.25%",
+    width: "100%",
+  };
+  const innerStyle: React.CSSProperties = {
+    position: "absolute",
+    inset: 0,
+    width: "100%",
+    height: "100%",
   };
 
   if (heroVideo) {
     const embedUrl = toYouTubeEmbed(heroVideo);
     if (embedUrl) {
+      /* Instagram IAB blocks YouTube iframes — show thumbnail + play button
+         that opens YouTube instead. Works in every browser including IAB. */
+      const videoId = embedUrl.replace("https://www.youtube.com/embed/", "").split("?")[0];
       return (
-        <div style={wrapperStyle}>
-          <iframe
-            src={embedUrl}
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-            allowFullScreen
-            className="w-full h-full"
-            style={{ border: 0, display: "block" }}
-          />
+        <div style={outerStyle}>
+          <a
+            href={`https://www.youtube.com/watch?v=${videoId}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{ ...innerStyle, display: "block" }}
+          >
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={`https://i.ytimg.com/vi/${videoId}/hqdefault.jpg`}
+              alt="Course preview video"
+              style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
+            />
+            {/* Play button overlay */}
+            <div style={{
+              position: "absolute", inset: 0,
+              display: "flex", alignItems: "center", justifyContent: "center",
+            }}>
+              <div style={{
+                width: 64, height: 64, borderRadius: "50%",
+                background: "rgba(0,0,0,0.72)",
+                display: "flex", alignItems: "center", justifyContent: "center",
+                border: "2px solid rgba(255,255,255,0.6)",
+              }}>
+                <svg viewBox="0 0 24 24" fill="white" width={30} height={30} aria-hidden="true">
+                  <path d="M8 5v14l11-7z" />
+                </svg>
+              </div>
+            </div>
+          </a>
         </div>
       );
     }
     if (/\.(mp4|webm)$/i.test(heroVideo)) {
       return (
-        <div style={wrapperStyle}>
+        <div style={outerStyle}>
           {/* eslint-disable-next-line jsx-a11y/media-has-caption */}
-          <video controls src={heroVideo} className="w-full h-full" style={{ display: "block" }} />
+          <video controls src={heroVideo} style={{ ...innerStyle, display: "block", objectFit: "cover" }} />
         </div>
       );
     }
     return (
-      <div style={wrapperStyle}>
+      <div style={outerStyle}>
         <iframe
           src={heroVideo}
           allow="autoplay; encrypted-media"
           allowFullScreen
-          className="w-full h-full"
-          style={{ border: 0, display: "block" }}
+          style={{ ...innerStyle, border: 0, display: "block" }}
         />
       </div>
     );
@@ -200,13 +231,12 @@ function HeroMedia({
 
   if (cover) {
     return (
-      <div style={wrapperStyle}>
+      <div style={outerStyle}>
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src={cover}
           alt="Course preview"
-          className="w-full h-full object-cover"
-          style={{ display: "block" }}
+          style={{ ...innerStyle, objectFit: "cover", display: "block" }}
         />
       </div>
     );
