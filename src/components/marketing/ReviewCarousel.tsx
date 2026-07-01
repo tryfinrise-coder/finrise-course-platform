@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef } from "react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
 // ⚠️ SAMPLE reviews — replace with REAL, verified learner reviews before
 // running ads. Fake testimonials breach Meta/Google ad policy.
@@ -53,9 +54,7 @@ export default function ReviewCarousel() {
         boxShadow: "0 6px 18px rgba(0,0,0,0.5)",
       }}
     >
-      <span className="material-symbols-outlined" style={{ fontSize: 22 }}>
-        {side === "left" ? "chevron_left" : "chevron_right"}
-      </span>
+      {side === "left" ? <ChevronLeft size={22} /> : <ChevronRight size={22} />}
     </button>
   );
 

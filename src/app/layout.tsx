@@ -1,7 +1,15 @@
 import type { Metadata } from "next";
+import { Poppins } from "next/font/google";
 import Script from "next/script";
 import "./globals.css";
 import { ensureBootstrapped } from "@/lib/bootstrap";
+
+const poppins = Poppins({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700", "800"],
+  display: "swap",
+  variable: "--font-poppins",
+});
 
 export const metadata: Metadata = {
   title: "Finrise — Master Candlestick Charting",
@@ -20,22 +28,8 @@ export default async function RootLayout({
   await ensureBootstrapped();
 
   return (
-    <html lang="en">
-      <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link
-          href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap"
-          rel="stylesheet"
-        />
-        {/* Material Symbols — display=block keeps icons invisible while loading
-            instead of flashing as raw text like "candlestick_chart" */}
-        <link
-          href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,500,0,0&display=block"
-          rel="stylesheet"
-        />
-      </head>
-      <body>
+    <html lang="en" className={poppins.variable}>
+      <body className={poppins.className}>
         {children}
         {/* Microsoft Clarity */}
         <Script id="ms-clarity" strategy="afterInteractive">

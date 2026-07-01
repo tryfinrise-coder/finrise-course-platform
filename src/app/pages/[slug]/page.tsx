@@ -2,6 +2,11 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import type { Metadata } from "next";
 import { Poppins } from "next/font/google";
+import {
+  CandlestickChart, Film, Crosshair, Infinity as InfinityIcon,
+  X, Star, ListFilter, CheckCircle2, BarChart2, Bot,
+  Languages, Shield, Clock, FileText, MinusCircle, HelpCircle, Lock,
+} from "lucide-react";
 import { getProductBySlug } from "@/lib/products";
 import { formatPrice } from "@/lib/types";
 import { getAutoApplyDiscount } from "@/lib/discounts";
@@ -268,8 +273,6 @@ export default async function CourseSalesPage({
           currency: "INR",
         }}
       />
-      {/* Material Symbols loaded in root layout <head> */}
-
       {/* ════════════════════════════════════════════════════════════
           1. STICKY HEADER
       ════════════════════════════════════════════════════════════ */}
@@ -341,7 +344,7 @@ export default async function CourseSalesPage({
                   background: "rgba(24,168,122,0.10)",
                 }}
               >
-                <span className="material-symbols-outlined" style={{ fontSize: 15 }}>candlestick_chart</span>
+                <CandlestickChart size={15} />
                 Candlestick Pattern Mastery
               </div>
 
@@ -376,17 +379,17 @@ export default async function CourseSalesPage({
               {/* Benefit chips */}
               <div className="mb-7 flex flex-wrap justify-center gap-2 lg:justify-start">
                 {[
-                  { icon: "movie", label: "34 animated patterns" },
-                  { icon: "my_location", label: "Entry · stop · risk" },
-                  { icon: "all_inclusive", label: "Lifetime access" },
-                ].map((chip) => (
+                  { Icon: Film, label: "34 animated patterns" },
+                  { Icon: Crosshair, label: "Entry · stop · risk" },
+                  { Icon: InfinityIcon, label: "Lifetime access" },
+                ].map(({ Icon: ChipIcon, label }) => (
                   <span
-                    key={chip.label}
+                    key={label}
                     className="inline-flex items-center gap-1.5 rounded-full border px-3.5 py-1.5 text-[12px] font-semibold"
                     style={{ borderColor: "rgba(24,168,122,0.35)", background: "rgba(24,168,122,0.08)", color: TEXT_HEAD }}
                   >
-                    <span className="material-symbols-outlined" style={{ fontSize: 16, color: EMERALD }}>{chip.icon}</span>
-                    {chip.label}
+                    <ChipIcon size={16} color={EMERALD} />
+                    {label}
                   </span>
                 ))}
               </div>
@@ -504,9 +507,7 @@ export default async function CourseSalesPage({
                 className="flex items-start gap-3 rounded-xl border p-4"
                 style={{ borderColor: BORDER, background: BG_CARD }}
               >
-                <span className="material-symbols-outlined shrink-0" style={{ fontSize: 20, color: RED }}>
-                  close
-                </span>
+                <X size={20} color={RED} className="shrink-0" />
                 <span style={{ color: TEXT_BODY, fontSize: "0.98rem", lineHeight: 1.55 }}>{pain}</span>
               </div>
             ))}
@@ -560,15 +561,15 @@ export default async function CourseSalesPage({
 
           <div className="grid grid-cols-1 gap-5 text-left sm:grid-cols-2 lg:grid-cols-3">
             {[
-              { icon: "candlestick_chart", title: "34 candlestick patterns", sub: "Every pattern explained with clear animations." },
-              { icon: "translate", title: "English + हिंदी", sub: "Learn every lesson in the language you think in." },
-              { icon: "shield", title: "Risk-management module", sub: "Where to enter, where to stop, and how much to risk." },
-              { icon: "schedule", title: "Self-paced", sub: "Go at your own pace and revisit anytime." },
-              { icon: "picture_as_pdf", title: "Candlestick Handbook", sub: "A downloadable PDF reference to keep." },
-              { icon: "all_inclusive", title: "Lifetime access", sub: "Yours forever, including future updates." },
-            ].map((it) => (
+              { Icon: CandlestickChart, title: "34 candlestick patterns", sub: "Every pattern explained with clear animations." },
+              { Icon: Languages, title: "English + हिंदी", sub: "Learn every lesson in the language you think in." },
+              { Icon: Shield, title: "Risk-management module", sub: "Where to enter, where to stop, and how much to risk." },
+              { Icon: Clock, title: "Self-paced", sub: "Go at your own pace and revisit anytime." },
+              { Icon: FileText, title: "Candlestick Handbook", sub: "A downloadable PDF reference to keep." },
+              { Icon: InfinityIcon, title: "Lifetime access", sub: "Yours forever, including future updates." },
+            ].map(({ Icon: ItIcon, title, sub }) => (
               <div
-                key={it.title}
+                key={title}
                 className="rounded-2xl border p-5"
                 style={{ borderColor: BORDER, background: BG_CARD }}
               >
@@ -576,12 +577,12 @@ export default async function CourseSalesPage({
                   className="mb-3 inline-flex h-11 w-11 items-center justify-center rounded-xl"
                   style={{ background: "rgba(24,168,122,0.12)", color: EMERALD }}
                 >
-                  <span className="material-symbols-outlined" style={{ fontSize: 24 }}>{it.icon}</span>
+                  <ItIcon size={24} />
                 </span>
                 <div style={{ color: TEXT_HEAD, fontSize: "1.05rem", fontWeight: 700, marginBottom: 4 }}>
-                  {it.title}
+                  {title}
                 </div>
-                <div style={{ color: TEXT_BODY, fontSize: "0.92rem", lineHeight: 1.5 }}>{it.sub}</div>
+                <div style={{ color: TEXT_BODY, fontSize: "0.92rem", lineHeight: 1.5 }}>{sub}</div>
               </div>
             ))}
           </div>
@@ -609,7 +610,7 @@ export default async function CourseSalesPage({
                 color: GOLD,
               }}
             >
-              <span className="material-symbols-outlined" style={{ fontSize: 15 }}>workspace_premium</span>
+              <Star size={15} />
               Included Free
             </div>
             <h2
@@ -639,7 +640,7 @@ export default async function CourseSalesPage({
               }}
             >
               <div className="mb-4 flex items-center gap-2">
-                <span className="material-symbols-outlined" style={{ fontSize: 28, color: GOLD }}>filter_list</span>
+                <ListFilter size={28} color={GOLD} />
                 <span
                   className="rounded-full px-2.5 py-0.5 text-[10px] font-black uppercase tracking-wider"
                   style={{ background: "rgba(224,180,58,0.18)", color: GOLD }}
@@ -657,7 +658,7 @@ export default async function CourseSalesPage({
                 className="mt-auto flex items-center gap-2 border-t pt-4"
                 style={{ borderColor: "rgba(224,180,58,0.18)", marginTop: "auto", paddingTop: 16 }}
               >
-                <span className="material-symbols-outlined" style={{ fontSize: 16, color: GOLD }}>check_circle</span>
+                <CheckCircle2 size={16} color={GOLD} />
                 <span className="text-xs font-semibold" style={{ color: GOLD }}>Included free</span>
               </div>
             </div>
@@ -672,7 +673,7 @@ export default async function CourseSalesPage({
               }}
             >
               <div className="mb-4 flex items-center gap-2">
-                <span className="material-symbols-outlined" style={{ fontSize: 28, color: GOLD }}>query_stats</span>
+                <BarChart2 size={28} color={GOLD} />
                 <span
                   className="rounded-full px-2.5 py-0.5 text-[10px] font-black uppercase tracking-wider"
                   style={{ background: "rgba(224,180,58,0.18)", color: GOLD }}
@@ -690,7 +691,7 @@ export default async function CourseSalesPage({
                 className="mt-auto flex items-center gap-2 border-t pt-4"
                 style={{ borderColor: "rgba(224,180,58,0.18)", marginTop: "auto", paddingTop: 16 }}
               >
-                <span className="material-symbols-outlined" style={{ fontSize: 16, color: GOLD }}>check_circle</span>
+                <CheckCircle2 size={16} color={GOLD} />
                 <span className="text-xs font-semibold" style={{ color: GOLD }}>Included free</span>
               </div>
             </div>
@@ -705,7 +706,7 @@ export default async function CourseSalesPage({
               }}
             >
               <div className="mb-4 flex items-center gap-2">
-                <span className="material-symbols-outlined" style={{ fontSize: 28, color: GOLD }}>smart_toy</span>
+                <Bot size={28} color={GOLD} />
                 <span
                   className="rounded-full px-2.5 py-0.5 text-[10px] font-black uppercase tracking-wider"
                   style={{ background: "rgba(224,180,58,0.18)", color: GOLD }}
@@ -723,7 +724,7 @@ export default async function CourseSalesPage({
                 className="mt-auto flex items-center gap-2 border-t pt-4"
                 style={{ borderColor: "rgba(224,180,58,0.18)", marginTop: "auto", paddingTop: 16 }}
               >
-                <span className="material-symbols-outlined" style={{ fontSize: 16, color: GOLD }}>check_circle</span>
+                <CheckCircle2 size={16} color={GOLD} />
                 <span className="text-xs font-semibold" style={{ color: GOLD }}>Included free</span>
               </div>
             </div>
@@ -816,9 +817,7 @@ export default async function CourseSalesPage({
               "You learn best at your own pace, in your own language.",
             ].map((item, i) => (
               <div key={i} className="flex items-start gap-3">
-                <span className="material-symbols-outlined shrink-0 mt-0.5" style={{ fontSize: 20, color: EMERALD }}>
-                  check_circle
-                </span>
+                <CheckCircle2 size={20} color={EMERALD} className="shrink-0 mt-0.5" />
                 <span
                   style={{ color: TEXT_BODY, fontSize: "0.98rem", lineHeight: 1.55 }}
                   dangerouslySetInnerHTML={{ __html: item }}
@@ -832,9 +831,7 @@ export default async function CourseSalesPage({
             className="mx-auto mt-10 flex max-w-2xl items-start gap-3 rounded-xl border p-4 text-left"
             style={{ borderColor: "rgba(220,38,38,0.3)", background: "rgba(220,38,38,0.06)" }}
           >
-            <span className="material-symbols-outlined shrink-0" style={{ fontSize: 20, color: RED }}>
-              do_not_disturb_on
-            </span>
+            <MinusCircle size={20} color={RED} className="shrink-0" />
             <span style={{ color: TEXT_BODY, fontSize: "0.95rem", lineHeight: 1.55 }}>
               <strong style={{ color: TEXT_HEAD }}>Not for you if</strong> you want guaranteed buy/sell tips or overnight
               shortcuts — this course teaches you to read charts yourself, not to hand you calls.
@@ -882,9 +879,7 @@ export default async function CourseSalesPage({
             ].map((qa, i) => (
               <div key={i} className="rounded-xl border p-5" style={{ borderColor: BORDER, background: BG_CARD }}>
                 <div className="flex items-start gap-3">
-                  <span className="material-symbols-outlined shrink-0" style={{ fontSize: 22, color: EMERALD }}>
-                    help
-                  </span>
+                  <HelpCircle size={22} color={EMERALD} className="shrink-0" />
                   <div>
                     <div style={{ color: TEXT_HEAD, fontWeight: 700, fontSize: "1rem" }}>{qa.q}</div>
                     <div style={{ color: TEXT_BODY, fontSize: "0.95rem", lineHeight: 1.6, marginTop: 6 }}>{qa.a}</div>
@@ -1046,7 +1041,7 @@ export default async function CourseSalesPage({
             />
           </div>
           <p className="mt-4 flex items-center justify-center gap-1.5 text-xs" style={{ color: TEXT_MUTED }}>
-            <span className="material-symbols-outlined" style={{ fontSize: 14, color: EMERALD }}>lock</span>
+            <Lock size={14} color={EMERALD} />
             Secure checkout · Instant access · Lifetime access
           </p>
         </div>
