@@ -19,11 +19,12 @@ next-env.d.ts
 .env.local
 .env*.local
 
-# database (local SQLite file + uploaded files)
+# database (local SQLite file)
 /data/*.db
 /data/*.db-*
-/storage/*
-!/storage/.gitkeep
+
+# storage/ contains uploaded PDFs and images — track them in git so they
+# survive pushes. For large-scale production, migrate to S3/Cloudinary instead.
 
 # misc
 .DS_Store

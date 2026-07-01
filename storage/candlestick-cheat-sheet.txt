@@ -1,0 +1,13 @@
+FINNORA — CANDLESTICK CHEAT SHEET
+=================================
+
+DOJI            Open ~ close. Indecision; trend may stall.
+HAMMER          Small body up top, long lower wick. Bullish after a downtrend.
+INVERTED HAMMER Small body near low, long upper wick. Bullish (needs confirmation).
+SHOOTING STAR   Same shape as inverted hammer, but at a top. Bearish rejection.
+BULLISH ENGULFING  Green body swallows the prior red body. Bullish reversal.
+BEARISH ENGULFING  Red body swallows the prior green body. Bearish reversal.
+MORNING STAR    Big red -> small star -> big green. Bullish bottom.
+EVENING STAR    Big green -> small star -> big red. Bearish top.
+
+(This is a protected sample file streamed only to entitled buyers.)
