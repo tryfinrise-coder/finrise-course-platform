@@ -28,6 +28,12 @@ export default async function RootLayout({
           href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap"
           rel="stylesheet"
         />
+        {/* Material Symbols — display=block keeps icons invisible while loading
+            instead of flashing as raw text like "candlestick_chart" */}
+        <link
+          href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,500,0,0&display=block"
+          rel="stylesheet"
+        />
       </head>
       <body>
         {children}

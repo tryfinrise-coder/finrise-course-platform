@@ -49,92 +49,89 @@ function CourseCoverMockup() {
         border: "1px solid rgba(255,255,255,0.10)",
         background: "linear-gradient(145deg, #0B0E14 0%, #0E1B2E 100%)",
         boxShadow: "0 0 60px rgba(24,168,122,0.18), 0 16px 48px rgba(0,0,0,0.55)",
-        padding: "28px 28px 24px",
-        position: "relative",
         overflow: "hidden",
-        aspectRatio: "16/9",
-        display: "flex",
-        flexDirection: "column",
-        justifyContent: "space-between",
+        position: "relative",
+        /* padding-bottom trick: universal cross-browser 16:9 */
+        paddingBottom: "56.25%",
+        width: "100%",
       }}
     >
-      {/* Beginner tag */}
-      <div>
-        <div
-          style={{
-            display: "inline-flex",
-            alignItems: "center",
-            gap: 6,
-            borderRadius: 999,
-            background: "rgba(24,168,122,0.15)",
-            border: "1px solid rgba(24,168,122,0.4)",
-            color: "#18A87A",
-            fontSize: 9,
-            fontWeight: 700,
-            letterSpacing: "0.1em",
-            textTransform: "uppercase",
-            padding: "4px 10px",
-            marginBottom: 14,
-          }}
-        >
-          FOR COMPLETE BEGINNERS
-        </div>
-        <div
-          style={{
-            color: "#E7ECF5",
-            fontSize: "clamp(1.25rem, 3vw, 1.75rem)",
-            fontWeight: 800,
-            letterSpacing: "-0.02em",
-            lineHeight: 1.15,
-            fontFamily: "Georgia, serif",
-            marginBottom: 6,
-          }}
-        >
-          Candlestick Mastery
-        </div>
-        <div
-          style={{
-            color: "#6B7280",
-            fontSize: 10,
-            fontWeight: 600,
-            letterSpacing: "0.12em",
-            textTransform: "uppercase",
-          }}
-        >
-          Interactive Pattern Course
-        </div>
-      </div>
-
-      {/* Candlestick SVG */}
-      <div style={{ display: "flex", alignItems: "center", justifyContent: "center", flex: 1, padding: "10px 0" }}>
-        <svg viewBox="0 0 220 80" width="72%" height="auto" aria-hidden="true" style={{ maxWidth: 260 }}>
-          <line x1="22" y1="4"  x2="22" y2="76" stroke="#dc2626" strokeWidth="1.5" strokeLinecap="round" />
-          <line x1="58" y1="8"  x2="58" y2="70" stroke="#dc2626" strokeWidth="1.5" strokeLinecap="round" />
-          <line x1="94" y1="16" x2="94" y2="72" stroke="#16a34a" strokeWidth="1.5" strokeLinecap="round" />
-          <line x1="130" y1="6" x2="130" y2="68" stroke="#16a34a" strokeWidth="1.5" strokeLinecap="round" />
-          <line x1="166" y1="2" x2="166" y2="64" stroke="#16a34a" strokeWidth="1.5" strokeLinecap="round" />
-          <line x1="202" y1="10" x2="202" y2="60" stroke="#16a34a" strokeWidth="1.5" strokeLinecap="round" />
-          <rect x="13" y="18" width="18" height="44" rx="2" fill="#dc2626" />
-          <rect x="49" y="22" width="18" height="36" rx="2" fill="#dc2626" />
-          <rect x="85" y="28" width="18" height="38" rx="2" fill="#16a34a" />
-          <rect x="121" y="14" width="18" height="46" rx="2" fill="#16a34a" />
-          <rect x="157" y="10" width="18" height="46" rx="2" fill="#16a34a" />
-          <rect x="193" y="16" width="18" height="38" rx="2" fill="#16a34a" />
-        </svg>
-      </div>
-
-      {/* Footer */}
+      {/* Absolutely positioned inner so content fills the padded box */}
       <div
         style={{
-          color: "#6B7280",
-          fontSize: 10,
-          fontWeight: 500,
-          letterSpacing: "0.05em",
-          borderTop: "1px solid rgba(255,255,255,0.07)",
-          paddingTop: 10,
+          position: "absolute",
+          inset: 0,
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "space-between",
+          padding: "20px 22px 16px",
         }}
       >
-        English + हिन्दी &nbsp;·&nbsp; 34 patterns &nbsp;·&nbsp; Lifetime access
+        {/* Top — tag + headline */}
+        <div>
+          <div
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              borderRadius: 999,
+              background: "rgba(24,168,122,0.15)",
+              border: "1px solid rgba(24,168,122,0.4)",
+              color: "#18A87A",
+              fontSize: 9,
+              fontWeight: 700,
+              letterSpacing: "0.1em",
+              textTransform: "uppercase",
+              padding: "3px 9px",
+              marginBottom: 10,
+            }}
+          >
+            FOR COMPLETE BEGINNERS
+          </div>
+
+          {/* Big STOP GUESSING headline */}
+          <div style={{ lineHeight: 1, marginBottom: 4 }}>
+            <div style={{ color: "#dc2626", fontSize: "clamp(1.5rem, 5vw, 2.2rem)", fontWeight: 900, letterSpacing: "-0.02em" }}>
+              STOP
+            </div>
+            <div style={{ color: "#E7ECF5", fontSize: "clamp(1.5rem, 5vw, 2.2rem)", fontWeight: 900, letterSpacing: "-0.02em" }}>
+              GUESSING
+            </div>
+          </div>
+          <div style={{ color: "#18A87A", fontSize: "clamp(0.6rem, 1.8vw, 0.78rem)", fontWeight: 600, marginTop: 4 }}>
+            Read every candle with real confidence.
+          </div>
+        </div>
+
+        {/* Middle — candlestick SVG */}
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "flex-end", flex: 1 }}>
+          <svg viewBox="0 0 160 90" width="52%" height="auto" aria-hidden="true" style={{ opacity: 0.9 }}>
+            <line x1="16"  y1="4"  x2="16"  y2="86" stroke="#dc2626" strokeWidth="1.5" strokeLinecap="round" />
+            <line x1="42"  y1="8"  x2="42"  y2="78" stroke="#dc2626" strokeWidth="1.5" strokeLinecap="round" />
+            <line x1="68"  y1="18" x2="68"  y2="82" stroke="#16a34a" strokeWidth="1.5" strokeLinecap="round" />
+            <line x1="94"  y1="6"  x2="94"  y2="74" stroke="#16a34a" strokeWidth="1.5" strokeLinecap="round" />
+            <line x1="120" y1="2"  x2="120" y2="68" stroke="#16a34a" strokeWidth="1.5" strokeLinecap="round" />
+            <line x1="146" y1="10" x2="146" y2="64" stroke="#16a34a" strokeWidth="1.5" strokeLinecap="round" />
+            <rect x="8"   y="20" width="16" height="48" rx="2" fill="#dc2626" />
+            <rect x="34"  y="24" width="16" height="40" rx="2" fill="#dc2626" />
+            <rect x="60"  y="30" width="16" height="42" rx="2" fill="#16a34a" />
+            <rect x="86"  y="14" width="16" height="50" rx="2" fill="#16a34a" />
+            <rect x="112" y="10" width="16" height="50" rx="2" fill="#16a34a" />
+            <rect x="138" y="16" width="16" height="42" rx="2" fill="#16a34a" />
+          </svg>
+        </div>
+
+        {/* Bottom — course label */}
+        <div style={{ borderTop: "1px solid rgba(255,255,255,0.07)", paddingTop: 8 }}>
+          <div style={{ color: "#6B7280", fontSize: 8, fontWeight: 600, letterSpacing: "0.12em", textTransform: "uppercase", marginBottom: 2 }}>
+            Interactive Pattern Course
+          </div>
+          <div style={{ color: "#E7ECF5", fontSize: "clamp(0.65rem, 2vw, 0.85rem)", fontWeight: 800, letterSpacing: "0.04em", textTransform: "uppercase" }}>
+            Candlestick Mastery
+          </div>
+          <div style={{ color: "#4B5563", fontSize: 8, fontWeight: 500, marginTop: 3 }}>
+            English + हिन्दी &nbsp;·&nbsp; 34 animated patterns
+          </div>
+        </div>
       </div>
     </div>
   );
@@ -271,11 +268,7 @@ export default async function CourseSalesPage({
           currency: "INR",
         }}
       />
-      {/* ── Material Symbols font ──────────────────────────────── */}
-      <link
-        rel="stylesheet"
-        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,500,0,0"
-      />
+      {/* Material Symbols loaded in root layout <head> */}
 
       {/* ════════════════════════════════════════════════════════════
           1. STICKY HEADER
