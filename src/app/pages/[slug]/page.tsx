@@ -12,6 +12,7 @@ import { formatPrice } from "@/lib/types";
 import { getAutoApplyDiscount } from "@/lib/discounts";
 import CheckoutButton from "@/components/checkout/CheckoutButton";
 import ReviewCarousel from "@/components/marketing/ReviewCarousel";
+import HeroMedia from "@/components/marketing/HeroMedia";
 import PixelEvent from "@/components/pixel/PixelEvent";
 
 export const dynamic = "force-dynamic";
@@ -45,214 +46,28 @@ function toYouTubeEmbed(url: string): string | null {
   return null;
 }
 
-/* ── Course-cover placeholder ──────────────────────────────────── */
-function CourseCoverMockup() {
+/* ── Hero media slot: imported client component with onError fallback ── */
+
+/* ── YouTube preview link (shown below the CTA if a video is set) ── */
+function YoutubePreviewLink({ heroVideo }: { heroVideo: string | null }) {
+  if (!heroVideo) return null;
+  const embedUrl = toYouTubeEmbed(heroVideo);
+  if (!embedUrl) return null;
+  const videoId = embedUrl.replace("https://www.youtube.com/embed/", "").split("?")[0];
   return (
-    <div
-      style={{
-        borderRadius: 16,
-        border: "1px solid rgba(255,255,255,0.10)",
-        background: "linear-gradient(145deg, #0B0E14 0%, #0E1B2E 100%)",
-        boxShadow: "0 0 60px rgba(24,168,122,0.18), 0 16px 48px rgba(0,0,0,0.55)",
-        overflow: "hidden",
-        position: "relative",
-        /* padding-bottom trick: universal cross-browser 16:9 */
-        paddingBottom: "56.25%",
-        width: "100%",
-      }}
+    <a
+      href={`https://www.youtube.com/watch?v=${videoId}`}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="mt-3 inline-flex items-center gap-1.5 text-xs font-semibold"
+      style={{ color: "#18A87A" }}
     >
-      {/* Absolutely positioned inner so content fills the padded box */}
-      <div
-        style={{
-          position: "absolute",
-          top: 0,
-          right: 0,
-          bottom: 0,
-          left: 0,
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "space-between",
-          padding: "20px 22px 16px",
-        }}
-      >
-        {/* Top — tag + headline */}
-        <div>
-          <div
-            style={{
-              display: "inline-flex",
-              alignItems: "center",
-              borderRadius: 999,
-              background: "rgba(24,168,122,0.15)",
-              border: "1px solid rgba(24,168,122,0.4)",
-              color: "#18A87A",
-              fontSize: 9,
-              fontWeight: 700,
-              letterSpacing: "0.1em",
-              textTransform: "uppercase",
-              padding: "3px 9px",
-              marginBottom: 10,
-            }}
-          >
-            FOR COMPLETE BEGINNERS
-          </div>
-
-          {/* Big STOP GUESSING headline */}
-          <div style={{ lineHeight: 1, marginBottom: 4 }}>
-            <div style={{ color: "#dc2626", fontSize: "clamp(1.5rem, 5vw, 2.2rem)", fontWeight: 900, letterSpacing: "-0.02em" }}>
-              STOP
-            </div>
-            <div style={{ color: "#E7ECF5", fontSize: "clamp(1.5rem, 5vw, 2.2rem)", fontWeight: 900, letterSpacing: "-0.02em" }}>
-              GUESSING
-            </div>
-          </div>
-          <div style={{ color: "#18A87A", fontSize: "clamp(0.6rem, 1.8vw, 0.78rem)", fontWeight: 600, marginTop: 4 }}>
-            Read every candle with real confidence.
-          </div>
-        </div>
-
-        {/* Middle — candlestick SVG */}
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "flex-end", flex: 1 }}>
-          <svg viewBox="0 0 160 90" width="52%" height="auto" aria-hidden="true" style={{ opacity: 0.9 }}>
-            <line x1="16"  y1="4"  x2="16"  y2="86" stroke="#dc2626" strokeWidth="1.5" strokeLinecap="round" />
-            <line x1="42"  y1="8"  x2="42"  y2="78" stroke="#dc2626" strokeWidth="1.5" strokeLinecap="round" />
-            <line x1="68"  y1="18" x2="68"  y2="82" stroke="#16a34a" strokeWidth="1.5" strokeLinecap="round" />
-            <line x1="94"  y1="6"  x2="94"  y2="74" stroke="#16a34a" strokeWidth="1.5" strokeLinecap="round" />
-            <line x1="120" y1="2"  x2="120" y2="68" stroke="#16a34a" strokeWidth="1.5" strokeLinecap="round" />
-            <line x1="146" y1="10" x2="146" y2="64" stroke="#16a34a" strokeWidth="1.5" strokeLinecap="round" />
-            <rect x="8"   y="20" width="16" height="48" rx="2" fill="#dc2626" />
-            <rect x="34"  y="24" width="16" height="40" rx="2" fill="#dc2626" />
-            <rect x="60"  y="30" width="16" height="42" rx="2" fill="#16a34a" />
-            <rect x="86"  y="14" width="16" height="50" rx="2" fill="#16a34a" />
-            <rect x="112" y="10" width="16" height="50" rx="2" fill="#16a34a" />
-            <rect x="138" y="16" width="16" height="42" rx="2" fill="#16a34a" />
-          </svg>
-        </div>
-
-        {/* Bottom — course label */}
-        <div style={{ borderTop: "1px solid rgba(255,255,255,0.07)", paddingTop: 8 }}>
-          <div style={{ color: "#6B7280", fontSize: 8, fontWeight: 600, letterSpacing: "0.12em", textTransform: "uppercase", marginBottom: 2 }}>
-            Interactive Pattern Course
-          </div>
-          <div style={{ color: "#E7ECF5", fontSize: "clamp(0.65rem, 2vw, 0.85rem)", fontWeight: 800, letterSpacing: "0.04em", textTransform: "uppercase" }}>
-            Candlestick Mastery
-          </div>
-          <div style={{ color: "#4B5563", fontSize: 8, fontWeight: 500, marginTop: 3 }}>
-            English + हिन्दी &nbsp;·&nbsp; 34 animated patterns
-          </div>
-        </div>
-      </div>
-    </div>
+      <svg viewBox="0 0 24 24" fill="currentColor" width={14} height={14} aria-hidden="true">
+        <path d="M8 5v14l11-7z" />
+      </svg>
+      Watch course preview
+    </a>
   );
-}
-
-/* ── Hero media slot ────────────────────────────────────────────── */
-function HeroMedia({
-  heroVideo,
-  cover,
-}: {
-  heroVideo: string | null;
-  cover: string | null;
-}) {
-  /* padding-bottom trick: universal 16:9 that works in Instagram IAB,
-     old Android WebView, and every browser — aspect-ratio CSS does not. */
-  const outerStyle: React.CSSProperties = {
-    borderRadius: "16px",
-    border: "1px solid rgba(24,168,122,0.35)",
-    overflow: "hidden",
-    boxShadow: "0 0 40px rgba(24,168,122,0.18), 0 8px 32px rgba(0,0,0,0.45)",
-    background: "#141A24",
-    position: "relative",
-    paddingBottom: "56.25%",
-    width: "100%",
-  };
-  const innerStyle: React.CSSProperties = {
-    position: "absolute",
-    top: 0,
-    right: 0,
-    bottom: 0,
-    left: 0,
-    width: "100%",
-    height: "100%",
-  };
-
-  if (heroVideo) {
-    const embedUrl = toYouTubeEmbed(heroVideo);
-    if (embedUrl) {
-      /* Instagram IAB blocks YouTube iframes — show thumbnail + play button
-         that opens YouTube instead. Works in every browser including IAB. */
-      const videoId = embedUrl.replace("https://www.youtube.com/embed/", "").split("?")[0];
-      return (
-        <div style={outerStyle}>
-          <a
-            href={`https://www.youtube.com/watch?v=${videoId}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            style={{ ...innerStyle, display: "block" }}
-          >
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={`https://i.ytimg.com/vi/${videoId}/hqdefault.jpg`}
-              alt="Course preview video"
-              style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
-            />
-            {/* Play button overlay */}
-            <div style={{
-              position: "absolute",
-              top: 0,
-              right: 0,
-              bottom: 0,
-              left: 0,
-              display: "flex", alignItems: "center", justifyContent: "center",
-            }}>
-              <div style={{
-                width: 64, height: 64, borderRadius: "50%",
-                background: "rgba(0,0,0,0.72)",
-                display: "flex", alignItems: "center", justifyContent: "center",
-                border: "2px solid rgba(255,255,255,0.6)",
-              }}>
-                <svg viewBox="0 0 24 24" fill="white" width={30} height={30} aria-hidden="true">
-                  <path d="M8 5v14l11-7z" />
-                </svg>
-              </div>
-            </div>
-          </a>
-        </div>
-      );
-    }
-    if (/\.(mp4|webm)$/i.test(heroVideo)) {
-      return (
-        <div style={outerStyle}>
-          {/* eslint-disable-next-line jsx-a11y/media-has-caption */}
-          <video controls src={heroVideo} style={{ ...innerStyle, display: "block", objectFit: "cover" }} />
-        </div>
-      );
-    }
-    return (
-      <div style={outerStyle}>
-        <iframe
-          src={heroVideo}
-          allow="autoplay; encrypted-media"
-          allowFullScreen
-          style={{ ...innerStyle, border: 0, display: "block" }}
-        />
-      </div>
-    );
-  }
-
-  if (cover) {
-    return (
-      <div style={outerStyle}>
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src={cover}
-          alt="Course preview"
-          style={{ ...innerStyle, objectFit: "cover", display: "block" }}
-        />
-      </div>
-    );
-  }
-
-  return <CourseCoverMockup />;
 }
 
 
@@ -443,6 +258,7 @@ export default async function CourseSalesPage({
                 priceNow={priceNow}
                 className="h-14 rounded-xl px-8 text-[17px] font-bold"
               />
+              <YoutubePreviewLink heroVideo={product.hero_video ?? null} />
             </div>
 
             {/* RIGHT — hero media (desktop only; on mobile it sits under the sub-promise) */}
