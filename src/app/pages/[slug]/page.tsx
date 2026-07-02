@@ -13,6 +13,7 @@ import { getAutoApplyDiscount } from "@/lib/discounts";
 import CheckoutButton from "@/components/checkout/CheckoutButton";
 import ReviewCarousel from "@/components/marketing/ReviewCarousel";
 import HeroMedia from "@/components/marketing/HeroMedia";
+import StickyCTA from "@/components/marketing/StickyCTA";
 import PixelEvent from "@/components/pixel/PixelEvent";
 
 export const dynamic = "force-dynamic";
@@ -221,9 +222,30 @@ export default async function CourseSalesPage({
               </h1>
 
               {/* Sub-promise */}
-              <p style={{ color: TEXT_BODY, fontSize: "1.05rem", fontWeight: 500, marginBottom: "1.25rem" }}>
+              <p style={{ color: TEXT_BODY, fontSize: "1.05rem", fontWeight: 500, marginBottom: "0.85rem" }}>
                 Master candlestick patterns in plain Hindi &amp; English — and never miss the signal again.
               </p>
+
+              {/* Price trust anchor — visible above fold on mobile before CTA */}
+              <div
+                className="mb-5 flex items-center justify-center gap-2 lg:justify-start"
+                style={{ flexWrap: "wrap" }}
+              >
+                <span style={{ color: GOLD, fontWeight: 800, fontSize: "1.2rem" }}>
+                  {priceNow}
+                </span>
+                {priceStrike && (
+                  <span style={{ color: TEXT_MUTED, fontSize: "0.85rem", textDecoration: "line-through" }}>
+                    {priceStrike}
+                  </span>
+                )}
+                <span
+                  className="rounded-full px-2.5 py-0.5 text-[11px] font-bold"
+                  style={{ background: "rgba(24,168,122,0.15)", color: EMERALD }}
+                >
+                  One-time · Lifetime access
+                </span>
+              </div>
 
               {/* hero banner — mobile only, directly under the sub-promise */}
               <div className="mx-auto mb-7 mt-2 w-full max-w-md lg:hidden">
@@ -260,6 +282,16 @@ export default async function CourseSalesPage({
                 />
               </div>
               <YoutubePreviewLink heroVideo={product.hero_video ?? null} />
+
+              {/* Scroll indicator — mobile only */}
+              <div className="mt-6 flex flex-col items-center gap-1.5 lg:hidden animate-bounce">
+                <span style={{ color: EMERALD, fontSize: "0.65rem", fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase" }}>
+                  scroll to see more
+                </span>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#18A87A" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                  <path d="M12 5v14M5 12l7 7 7-7" />
+                </svg>
+              </div>
             </div>
 
             {/* RIGHT — hero media (desktop only; on mobile it sits under the sub-promise) */}
@@ -964,6 +996,13 @@ export default async function CourseSalesPage({
           </nav>
         </div>
       </footer>
+
+      {/* Sticky mobile CTA — slides up after scrolling past hero */}
+      <StickyCTA
+        slug={product.slug}
+        priceNow={priceNow}
+        priceStrike={priceStrike}
+      />
     </div>
   );
 }
