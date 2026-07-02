@@ -257,6 +257,22 @@ const SCHEMA: string[] = [
   `CREATE INDEX idx_lessons_product ON lessons(product_id)`,
   `CREATE INDEX idx_orders_user ON orders(user_id)`,
 
+  // ---- analytics: page views ----
+  `CREATE TABLE IF NOT EXISTS page_views (
+     id           INT AUTO_INCREMENT PRIMARY KEY,
+     ip           VARCHAR(45),
+     page         VARCHAR(500) NOT NULL,
+     referrer     VARCHAR(1000),
+     user_agent   VARCHAR(500),
+     utm_source   VARCHAR(200),
+     utm_medium   VARCHAR(200),
+     utm_campaign VARCHAR(200),
+     utm_content  VARCHAR(200),
+     created_at   DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+     KEY idx_pv_created (created_at),
+     KEY idx_pv_ip (ip)
+   ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4`,
+
   // ---- commerce: course purchases (guest-friendly, discount-aware) ----
   `CREATE TABLE IF NOT EXISTS course_purchases (
      id            INT AUTO_INCREMENT PRIMARY KEY,

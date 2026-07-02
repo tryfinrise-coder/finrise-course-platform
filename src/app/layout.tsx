@@ -3,6 +3,7 @@ import { Poppins } from "next/font/google";
 import Script from "next/script";
 import "./globals.css";
 import { ensureBootstrapped } from "@/lib/bootstrap";
+import TrackPageView from "@/components/TrackPageView";
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -31,6 +32,7 @@ export default async function RootLayout({
     <html lang="en" className={poppins.variable}>
       <body className={poppins.className}>
         {children}
+        <TrackPageView />
         {/* Microsoft Clarity */}
         <Script id="ms-clarity" strategy="afterInteractive">
           {`(function(c,l,a,r,i,t,y){

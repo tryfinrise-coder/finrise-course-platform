@@ -7,6 +7,7 @@ import {
   Ticket,
   CreditCard,
   Settings,
+  BarChart2,
   type LucideIcon,
 } from "lucide-react";
 
@@ -30,6 +31,7 @@ export const ADMIN_GROUPS: AdminNavGroup[] = [
     title: "Overview",
     items: [
       { label: "Dashboard", href: "/admin", icon: LayoutDashboard, exact: true, activeIcon: "text-sky-400", activeBg: "bg-sky-500/15" },
+      { label: "Analytics", href: "/admin/analytics", icon: BarChart2, activeIcon: "text-emerald-400", activeBg: "bg-emerald-500/15" },
     ],
   },
   {
