@@ -249,14 +249,16 @@ export default async function CourseSalesPage({
               </div>
 
               {/* CTA */}
-              <CheckoutButton
-                slug={product.slug}
-                label="Sign Up"
-                gold
-                priceStrike={priceStrike}
-                priceNow={priceNow}
-                className="h-14 rounded-xl px-8 text-[17px] font-bold"
-              />
+              <div data-track="cta_click" data-track-label="sign_up">
+                <CheckoutButton
+                  slug={product.slug}
+                  label="Sign Up"
+                  gold
+                  priceStrike={priceStrike}
+                  priceNow={priceNow}
+                  className="h-14 rounded-xl px-8 text-[17px] font-bold"
+                />
+              </div>
               <YoutubePreviewLink heroVideo={product.hero_video ?? null} />
             </div>
 

@@ -117,6 +117,62 @@ export async function getTopCampaigns(days = 30): Promise<CampaignRow[]> {
   );
 }
 
+export interface ConversionFunnel {
+  visitors: number;
+  scroll25: number;
+  scroll50: number;
+  scroll75: number;
+  ctaClicks: number;
+}
+
+export async function getConversionFunnel(days = 7): Promise<ConversionFunnel> {
+  const vRows = await query<{ n: number }>(
+    `SELECT COUNT(DISTINCT session_id) AS n
+     FROM page_views
+     WHERE created_at >= DATE_SUB(NOW(), INTERVAL ? DAY)
+       AND session_id IS NOT NULL`,
+    [days]
+  );
+  const eRows = await query<{ event: string; value: string; n: number }>(
+    `SELECT event, value, COUNT(DISTINCT session_id) AS n
+     FROM page_events
+     WHERE created_at >= DATE_SUB(NOW(), INTERVAL ? DAY)
+     GROUP BY event, value`,
+    [days]
+  );
+  const get = (ev: string, val: string) =>
+    Number(eRows.find((r) => r.event === ev && r.value === val)?.n ?? 0);
+  const ctaRow = eRows.filter((r) => r.event === "cta_click");
+  const ctaTotal = ctaRow.reduce((s, r) => s + Number(r.n), 0);
+
+  return {
+    visitors: Number(vRows[0]?.n ?? 0),
+    scroll25: get("scroll_depth", "25%"),
+    scroll50: get("scroll_depth", "50%"),
+    scroll75: get("scroll_depth", "75%"),
+    ctaClicks: ctaTotal,
+  };
+}
+
+export async function getAvgTimeOnPage(days = 7): Promise<number> {
+  const rows = await query<{ avg_secs: number }>(
+    `SELECT AVG(CAST(REPLACE(value, 's', '') AS UNSIGNED)) AS avg_secs
+     FROM page_events
+     WHERE event = 'time_on_page'
+       AND created_at >= DATE_SUB(NOW(), INTERVAL ? DAY)
+       AND CAST(REPLACE(value, 's', '') AS UNSIGNED) BETWEEN 3 AND 1800`,
+    [days]
+  );
+  return Math.round(Number(rows[0]?.avg_secs ?? 0));
+}
+
+export function formatSeconds(secs: number): string {
+  if (secs <= 0) return "—";
+  const m = Math.floor(secs / 60);
+  const s = secs % 60;
+  return m > 0 ? `${m}m ${s}s` : `${s}s`;
+}
+
 export async function getRecentViews(limit = 100): Promise<RecentView[]> {
   return query<RecentView>(
     `SELECT id, ip, page, referrer, utm_source, utm_campaign, created_at

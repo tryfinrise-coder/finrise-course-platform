@@ -257,7 +257,7 @@ const SCHEMA: string[] = [
   `CREATE INDEX idx_lessons_product ON lessons(product_id)`,
   `CREATE INDEX idx_orders_user ON orders(user_id)`,
 
-  // ---- analytics: page views ----
+  // ---- analytics: page views & events ----
   `CREATE TABLE IF NOT EXISTS page_views (
      id           INT AUTO_INCREMENT PRIMARY KEY,
      ip           VARCHAR(45),
@@ -272,6 +272,22 @@ const SCHEMA: string[] = [
      KEY idx_pv_created (created_at),
      KEY idx_pv_ip (ip)
    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4`,
+
+  `CREATE TABLE IF NOT EXISTS page_events (
+     id         INT AUTO_INCREMENT PRIMARY KEY,
+     session_id VARCHAR(64),
+     ip         VARCHAR(45),
+     page       VARCHAR(500) NOT NULL,
+     event      VARCHAR(100) NOT NULL,
+     value      VARCHAR(500),
+     created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+     KEY idx_pe_created (created_at),
+     KEY idx_pe_event (event),
+     KEY idx_pe_session (session_id)
+   ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4`,
+
+  // additive: add session_id to page_views
+  `ALTER TABLE page_views ADD COLUMN session_id VARCHAR(64) NULL`,
 
   // ---- commerce: course purchases (guest-friendly, discount-aware) ----
   `CREATE TABLE IF NOT EXISTS course_purchases (

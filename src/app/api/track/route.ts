@@ -4,7 +4,7 @@ import { execute } from "@/lib/db";
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { page, referrer, utm_source, utm_medium, utm_campaign, utm_content } = body;
+    const { page, referrer, utm_source, utm_medium, utm_campaign, utm_content, session_id } = body;
 
     // Skip admin sessions
     if (typeof page === "string" && page.startsWith("/admin")) {
@@ -20,8 +20,8 @@ export async function POST(req: NextRequest) {
 
     await execute(
       `INSERT INTO page_views
-         (ip, page, referrer, user_agent, utm_source, utm_medium, utm_campaign, utm_content)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+         (ip, page, referrer, user_agent, utm_source, utm_medium, utm_campaign, utm_content, session_id)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       [
         ip,
         (page ?? "/").slice(0, 500),
@@ -31,6 +31,7 @@ export async function POST(req: NextRequest) {
         utm_medium ?? null,
         utm_campaign ?? null,
         utm_content ?? null,
+        session_id ?? null,
       ]
     );
 

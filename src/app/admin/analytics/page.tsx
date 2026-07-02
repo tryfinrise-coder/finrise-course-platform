@@ -4,10 +4,13 @@ import {
   getTopReferrers,
   getTopCampaigns,
   getRecentViews,
+  getConversionFunnel,
+  getAvgTimeOnPage,
+  formatSeconds,
   friendlySource,
 } from "@/lib/analytics";
 import { Card } from "@/components/ui/card";
-import { Users, Eye, TrendingUp, Megaphone } from "lucide-react";
+import { Users, Eye, TrendingUp, Megaphone, Clock, MousePointerClick } from "lucide-react";
 
 export const dynamic = "force-dynamic";
 
@@ -29,19 +32,25 @@ function sourceColor(source: string): string {
 }
 
 export default async function AnalyticsPage() {
-  const [stats, daily, referrers, campaigns, recent] = await Promise.all([
+  const [stats, daily, referrers, campaigns, recent, funnel, avgSecs] = await Promise.all([
     getVisitorStats(7),
     getDailyVisits(14),
     getTopReferrers(7),
     getTopCampaigns(30),
     getRecentViews(100),
+    getConversionFunnel(7),
+    getAvgTimeOnPage(7),
   ]);
+
+  const ctaRate = funnel.visitors > 0
+    ? ((funnel.ctaClicks / funnel.visitors) * 100).toFixed(1)
+    : "0.0";
 
   const kpis = [
     { label: "Visits (7 days)", value: stats.total.toLocaleString(), icon: Eye, color: "text-sky-400", bg: "bg-sky-500/10" },
     { label: "Unique visitors (7d)", value: stats.unique.toLocaleString(), icon: Users, color: "text-emerald-400", bg: "bg-emerald-500/10" },
-    { label: "Today", value: stats.today.toLocaleString(), icon: TrendingUp, color: "text-amber-400", bg: "bg-amber-500/10" },
-    { label: "FB campaigns tracked", value: campaigns.length.toString(), icon: Megaphone, color: "text-pink-400", bg: "bg-pink-500/10" },
+    { label: "Avg time on page", value: formatSeconds(avgSecs), icon: Clock, color: "text-amber-400", bg: "bg-amber-500/10" },
+    { label: "CTA clicks (7d)", value: `${funnel.ctaClicks} (${ctaRate}%)`, icon: MousePointerClick, color: "text-pink-400", bg: "bg-pink-500/10" },
   ];
 
   const maxRef = referrers[0]?.count ?? 1;
@@ -71,6 +80,39 @@ export default async function AnalyticsPage() {
           </Card>
         ))}
       </div>
+
+      {/* Conversion funnel */}
+      <Card className="p-5">
+        <h3 className="mb-4 text-sm font-bold">Conversion funnel — last 7 days</h3>
+        {funnel.visitors === 0 ? (
+          <p className="text-sm text-muted-foreground">No session data yet. Funnel populates once visitors land on your pages.</p>
+        ) : (
+          <div className="space-y-3">
+            {[
+              { label: "Visited the page", count: funnel.visitors, color: "bg-sky-500" },
+              { label: "Scrolled 25%", count: funnel.scroll25, color: "bg-blue-500" },
+              { label: "Scrolled 50%  (saw pricing)", count: funnel.scroll50, color: "bg-violet-500" },
+              { label: "Scrolled 75%  (saw testimonials)", count: funnel.scroll75, color: "bg-amber-500" },
+              { label: "Clicked Sign Up", count: funnel.ctaClicks, color: "bg-emerald-500" },
+            ].map(({ label, count, color }) => {
+              const pct = funnel.visitors > 0 ? Math.round((count / funnel.visitors) * 100) : 0;
+              return (
+                <div key={label} className="flex items-center gap-3">
+                  <div className="w-52 shrink-0 text-xs text-muted-foreground">{label}</div>
+                  <div className="flex-1">
+                    <div className="h-2 overflow-hidden rounded-full bg-secondary">
+                      <div className={`h-full rounded-full ${color}`} style={{ width: `${pct}%` }} />
+                    </div>
+                  </div>
+                  <div className="w-20 text-right text-xs font-bold">
+                    {count.toLocaleString()} <span className="font-normal text-muted-foreground">({pct}%)</span>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
+      </Card>
 
       {/* Daily + referrers */}
       <div className="grid gap-4 lg:grid-cols-[1fr_320px]">
