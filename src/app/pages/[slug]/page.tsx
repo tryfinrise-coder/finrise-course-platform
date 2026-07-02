@@ -214,16 +214,15 @@ export default async function CourseSalesPage({
                   marginBottom: "1.1rem",
                 }}
               >
-                You open a chart and it looks like{" "}
-                <em className="not-italic" style={{ color: "#F87171" }}>confusing.</em>
+                <em className="not-italic" style={{ color: "#F87171" }}>Are you tired of doing Losses?</em>
                 <br />
-                <em className="not-italic" style={{ color: "#FFFFFF" }}>Stop Guessing,</em>{" "}
-                <em className="not-italic" style={{ color: EMERALD }}>Start Reading.</em>
+                <em className="not-italic" style={{ color: "#FFFFFF" }}>Stop Guessing.</em>{" "}
+                <em className="not-italic" style={{ color: EMERALD }}>Start Reading the Chart.</em>
               </h1>
 
               {/* Sub-promise */}
               <p style={{ color: TEXT_BODY, fontSize: "1.05rem", fontWeight: 500, marginBottom: "1.25rem" }}>
-                Read any candlestick chart with confidence — in plain English &amp; हिन्दी.
+                Master candlestick patterns in plain Hindi &amp; English — and never miss the signal again.
               </p>
 
               {/* hero banner — mobile only, directly under the sub-promise */}
