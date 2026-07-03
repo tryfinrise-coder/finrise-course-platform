@@ -182,3 +182,120 @@ export async function getRecentViews(limit = 100): Promise<RecentView[]> {
     [limit]
   );
 }
+
+// ---------------------------------------------------------------------------
+// Sales attribution — trace paid purchases back to the ad / source / campaign
+// that produced them. Amounts are stored in paise; format with formatPrice.
+// ---------------------------------------------------------------------------
+
+/** Friendly source for a purchase: prefer the UTM tag, else derive from the referrer. */
+export function purchaseSource(utmSource: string | null, referrer: string | null): string {
+  if (utmSource) {
+    const s = utmSource.toLowerCase();
+    if (s.includes("facebook") || s === "fb") return "Facebook";
+    if (s.includes("instagram") || s === "ig") return "Instagram";
+    if (s.includes("google")) return "Google";
+    if (s.includes("youtube")) return "YouTube";
+    if (s.includes("whatsapp")) return "WhatsApp";
+    if (s.includes("telegram")) return "Telegram";
+    return utmSource.charAt(0).toUpperCase() + utmSource.slice(1);
+  }
+  return friendlySource(referrer);
+}
+
+export interface SalesStats {
+  orders: number;
+  revenue: number; // paise
+  buyers: number; // distinct emails
+}
+
+export async function getSalesStats(days = 30): Promise<SalesStats> {
+  const rows = await query<{ orders: number; revenue: number; buyers: number }>(
+    `SELECT COUNT(*) AS orders, COALESCE(SUM(amount), 0) AS revenue, COUNT(DISTINCT email) AS buyers
+     FROM course_purchases
+     WHERE status = 'paid'
+       AND COALESCE(paid_at, created_at) >= DATE_SUB(NOW(), INTERVAL ? DAY)`,
+    [days]
+  );
+  const r = rows[0];
+  return { orders: Number(r?.orders ?? 0), revenue: Number(r?.revenue ?? 0), buyers: Number(r?.buyers ?? 0) };
+}
+
+export interface SalesSourceRow {
+  source: string;
+  orders: number;
+  revenue: number; // paise
+}
+
+/** Paid sales grouped by friendly source (UTM source first, else referrer). */
+export async function getSalesBySource(days = 30): Promise<SalesSourceRow[]> {
+  const rows = await query<{ utm_source: string | null; referrer: string | null; amount: number }>(
+    `SELECT utm_source, referrer, amount
+     FROM course_purchases
+     WHERE status = 'paid'
+       AND COALESCE(paid_at, created_at) >= DATE_SUB(NOW(), INTERVAL ? DAY)`,
+    [days]
+  );
+  const map = new Map<string, { orders: number; revenue: number }>();
+  for (const r of rows) {
+    const key = purchaseSource(r.utm_source, r.referrer);
+    const cur = map.get(key) ?? { orders: 0, revenue: 0 };
+    cur.orders += 1;
+    cur.revenue += Number(r.amount);
+    map.set(key, cur);
+  }
+  return Array.from(map.entries())
+    .map(([source, v]) => ({ source, ...v }))
+    .sort((a, b) => b.revenue - a.revenue);
+}
+
+export interface SalesCampaignRow {
+  utm_source: string;
+  utm_campaign: string;
+  orders: number;
+  revenue: number; // paise
+}
+
+/** Paid sales grouped by UTM campaign — the row that tells you which ad converts. */
+export async function getSalesByCampaign(days = 90): Promise<SalesCampaignRow[]> {
+  return query<SalesCampaignRow>(
+    `SELECT
+       COALESCE(utm_source,   'organic') AS utm_source,
+       COALESCE(utm_campaign, '(none)')  AS utm_campaign,
+       COUNT(*)                          AS orders,
+       COALESCE(SUM(amount), 0)          AS revenue
+     FROM course_purchases
+     WHERE status = 'paid'
+       AND COALESCE(paid_at, created_at) >= DATE_SUB(NOW(), INTERVAL ? DAY)
+     GROUP BY utm_source, utm_campaign
+     ORDER BY revenue DESC
+     LIMIT 30`,
+    [days]
+  );
+}
+
+export interface RecentSale {
+  id: number;
+  email: string;
+  name: string | null;
+  ip: string | null;
+  amount: number; // paise
+  utm_source: string | null;
+  utm_medium: string | null;
+  utm_campaign: string | null;
+  referrer: string | null;
+  paid_at: string | null;
+  created_at: string;
+}
+
+/** Most recent paid purchases with their full attribution, newest first. */
+export async function getRecentSales(limit = 50): Promise<RecentSale[]> {
+  return query<RecentSale>(
+    `SELECT id, email, name, ip, amount, utm_source, utm_medium, utm_campaign, referrer, paid_at, created_at
+     FROM course_purchases
+     WHERE status = 'paid'
+     ORDER BY COALESCE(paid_at, created_at) DESC
+     LIMIT ?`,
+    [limit]
+  );
+}

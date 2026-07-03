@@ -15,6 +15,33 @@ function getSessionId(): string {
   }
 }
 
+// Persist the FIRST-touch attribution (the ad/source that first brought this
+// visitor) so it's still available when they reach checkout on another page.
+// Written once per browser; never overwritten by later organic visits.
+function captureFirstTouch() {
+  try {
+    if (localStorage.getItem("_frsattr")) return;
+    const params = new URLSearchParams(window.location.search);
+    const hasUtm = params.get("utm_source") || params.get("utm_campaign");
+    const referrer = document.referrer || null;
+    // Only record once we have a real signal (a UTM tag or an external referrer).
+    if (!hasUtm && !referrer) return;
+    localStorage.setItem(
+      "_frsattr",
+      JSON.stringify({
+        utm_source: params.get("utm_source"),
+        utm_medium: params.get("utm_medium"),
+        utm_campaign: params.get("utm_campaign"),
+        utm_content: params.get("utm_content"),
+        referrer,
+        landing: window.location.pathname,
+      })
+    );
+  } catch {
+    /* storage blocked — attribution simply won't persist */
+  }
+}
+
 function sendEvent(event: string, value?: string) {
   fetch("/api/event", {
     method: "POST",
@@ -35,6 +62,7 @@ export default function TrackPageView() {
 
   useEffect(() => {
     const sid = getSessionId();
+    captureFirstTouch();
 
     // 1. Page view
     const params = new URLSearchParams(window.location.search);

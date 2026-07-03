@@ -12,6 +12,26 @@ interface CheckoutButtonProps {
   gold?: boolean; // golden eye-catching variant
 }
 
+// Pull the visitor's session id + first-touch attribution back out of storage
+// so the purchase can be tied to the ad / source they arrived from.
+function readAttribution() {
+  const out: Record<string, string> = {};
+  try {
+    const sid = sessionStorage.getItem("_frsid");
+    if (sid) out.session_id = sid;
+  } catch { /* ignore */ }
+  try {
+    const raw = localStorage.getItem("_frsattr");
+    if (raw) {
+      const a = JSON.parse(raw) as Record<string, string | null>;
+      for (const k of ["utm_source", "utm_medium", "utm_campaign", "utm_content", "referrer"]) {
+        if (a[k]) out[k] = a[k] as string;
+      }
+    }
+  } catch { /* ignore */ }
+  return out;
+}
+
 function loadRazorpayScript(): Promise<void> {
   return new Promise((resolve, reject) => {
     if (typeof window === "undefined") return reject(new Error("SSR"));
@@ -87,6 +107,7 @@ export default function CheckoutButton({
           name: nameRef.current?.value?.trim() ?? "",
           phone: phoneRef.current?.value?.trim() ?? "",
           code: codeRef.current?.value?.trim() ?? "",
+          ...readAttribution(),
         }),
       });
 

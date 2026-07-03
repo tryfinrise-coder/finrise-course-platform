@@ -305,6 +305,19 @@ const SCHEMA: string[] = [
      KEY idx_pur_status (status),
      FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE SET NULL
    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4`,
+
+  // additive: attribution snapshot frozen onto each purchase so paid sales can
+  // be traced back to the ad / source / campaign that produced them, even if
+  // the page_views rows are later pruned.
+  `ALTER TABLE course_purchases ADD COLUMN ip VARCHAR(45) NULL`,
+  `ALTER TABLE course_purchases ADD COLUMN session_id VARCHAR(64) NULL`,
+  `ALTER TABLE course_purchases ADD COLUMN utm_source VARCHAR(200) NULL`,
+  `ALTER TABLE course_purchases ADD COLUMN utm_medium VARCHAR(200) NULL`,
+  `ALTER TABLE course_purchases ADD COLUMN utm_campaign VARCHAR(200) NULL`,
+  `ALTER TABLE course_purchases ADD COLUMN utm_content VARCHAR(200) NULL`,
+  `ALTER TABLE course_purchases ADD COLUMN referrer VARCHAR(1000) NULL`,
+  `ALTER TABLE course_purchases ADD COLUMN paid_at DATETIME NULL`,
+  `CREATE INDEX idx_pur_paid_at ON course_purchases(paid_at)`,
 ];
 
 async function runSchema(): Promise<void> {

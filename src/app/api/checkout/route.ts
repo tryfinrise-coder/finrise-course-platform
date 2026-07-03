@@ -22,6 +22,23 @@ export async function POST(req: NextRequest) {
     const phone = typeof body.phone === "string" ? body.phone.trim() : null;
     const code = typeof body.code === "string" ? body.code.trim() : null;
 
+    // Attribution — where this buyer came from (client-supplied first-touch
+    // snapshot) plus the IP we capture server-side at payment initiation.
+    const str = (v: unknown) => (typeof v === "string" && v.trim() ? v.trim() : null);
+    const forwarded = req.headers.get("x-forwarded-for");
+    const ip = forwarded
+      ? forwarded.split(",")[0].trim()
+      : (req.headers.get("x-real-ip") ?? "unknown");
+    const attribution = {
+      ip,
+      session_id: str(body.session_id),
+      utm_source: str(body.utm_source),
+      utm_medium: str(body.utm_medium),
+      utm_campaign: str(body.utm_campaign),
+      utm_content: str(body.utm_content),
+      referrer: str(body.referrer),
+    };
+
     if (!email || !email.includes("@")) {
       return NextResponse.json({ error: "A valid email is required." }, { status: 400 });
     }
@@ -61,6 +78,7 @@ export async function POST(req: NextRequest) {
       discount_code: appliedCode,
       rp_order_id: order.id,
       status: "created",
+      ...attribution,
     });
 
     return NextResponse.json({
