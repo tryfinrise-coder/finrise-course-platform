@@ -1,6 +1,5 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import CheckoutButton from "@/components/checkout/CheckoutButton";
 
 interface Props {
@@ -10,15 +9,6 @@ interface Props {
 }
 
 export default function StickyCTA({ slug, priceNow, priceStrike }: Props) {
-  const [visible, setVisible] = useState(false);
-
-  useEffect(() => {
-    const check = () => setVisible(window.scrollY > 350);
-    check();
-    window.addEventListener("scroll", check, { passive: true });
-    return () => window.removeEventListener("scroll", check);
-  }, []);
-
   return (
     <div
       className="lg:hidden"
@@ -34,8 +24,6 @@ export default function StickyCTA({ slug, priceNow, priceStrike }: Props) {
         paddingBottom: "calc(10px + env(safe-area-inset-bottom))",
         backdropFilter: "blur(10px)",
         boxShadow: "0 -4px 24px rgba(0,0,0,0.45)",
-        transform: visible ? "translateY(0)" : "translateY(100%)",
-        transition: "transform 0.3s ease",
       }}
     >
       <div className="flex items-center gap-3">

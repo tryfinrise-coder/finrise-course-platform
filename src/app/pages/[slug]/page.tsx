@@ -215,7 +215,7 @@ export default async function CourseSalesPage({
                   marginBottom: "1.1rem",
                 }}
               >
-                <em className="not-italic" style={{ color: "#F87171" }}>Are you tired of doing Losses?</em>
+                <em className="not-italic" style={{ color: "#dc2626" }}>Are you tired of doing Losses?</em>
                 <br />
                 <em className="not-italic" style={{ color: "#FFFFFF" }}>Stop Guessing.</em>{" "}
                 <em className="not-italic" style={{ color: EMERALD }}>Start Reading the Chart.</em>
