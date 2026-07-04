@@ -30,7 +30,7 @@ export default function StickyCTA({ slug, priceNow, priceStrike }: Props) {
         <div className="flex-1 min-w-0">
           <div
             className="flex items-center gap-1.5"
-            style={{ color: "#FFFFFF", fontSize: "0.95rem", fontWeight: 800, whiteSpace: "nowrap" }}
+            style={{ color: "#FFFFFF", fontSize: "0.8rem", fontWeight: 600, whiteSpace: "nowrap" }}
           >
             <span
               aria-hidden="true"
