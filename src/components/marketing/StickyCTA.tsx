@@ -19,20 +19,27 @@ export default function StickyCTA({ slug, priceNow, priceStrike }: Props) {
         right: 0,
         zIndex: 60,
         background: "rgba(11,14,20,0.97)",
-        borderTop: "1px solid rgba(24,168,122,0.30)",
+        borderTop: "1px solid rgba(244,206,94,0.45)",
         padding: "10px 16px",
         paddingBottom: "calc(10px + env(safe-area-inset-bottom))",
         backdropFilter: "blur(10px)",
-        boxShadow: "0 -4px 24px rgba(0,0,0,0.45)",
+        boxShadow: "0 -6px 24px rgba(0,0,0,0.45)",
       }}
     >
       <div className="flex items-center gap-3">
         <div className="flex-1 min-w-0">
-          <div style={{ color: "#E7ECF5", fontSize: "0.82rem", fontWeight: 700, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
-            Candlestick Mastery
+          <div
+            className="flex items-center gap-1.5"
+            style={{ color: "#FFFFFF", fontSize: "0.95rem", fontWeight: 800, whiteSpace: "nowrap" }}
+          >
+            <span
+              aria-hidden="true"
+              style={{ height: 7, width: 7, borderRadius: "50%", background: "#F4CE5E", boxShadow: "0 0 8px rgba(244,206,94,0.9)" }}
+            />
+            5.6K+ Enrolled
           </div>
-          <div style={{ color: "#18A87A", fontSize: "0.72rem", fontWeight: 500 }}>
-            Lifetime access · No subscription
+          <div style={{ color: "rgba(255,255,255,0.9)", fontSize: "0.72rem", fontWeight: 600 }}>
+            Lifetime access
           </div>
         </div>
         <div data-track="cta_click" data-track-label="sticky_cta">

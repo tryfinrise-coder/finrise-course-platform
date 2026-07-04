@@ -183,14 +183,14 @@ export default async function CourseSalesPage({
         style={{
           background: `linear-gradient(180deg, ${BG_NAVY} 0%, ${BG_INK} 100%)`,
           borderBottom: `1px solid ${BORDER}`,
-          padding: "clamp(40px, 8vw, 64px) 0 clamp(48px, 10vw, 88px)",
+          padding: "clamp(14px, 3vw, 48px) 0 clamp(48px, 10vw, 88px)",
         }}
       >
         <div className="mx-auto max-w-6xl px-5">
           <div className="grid grid-cols-1 gap-10 lg:grid-cols-2 lg:items-center">
 
             {/* LEFT — copy */}
-            <div className="pt-2 text-center lg:text-left">
+            <div className="text-center lg:text-left">
               {/* Eyebrow pill */}
               <div
                 className="mb-5 inline-flex items-center gap-2 rounded-full border px-4 py-1.5 text-[11px] font-bold uppercase tracking-widest"
@@ -215,7 +215,19 @@ export default async function CourseSalesPage({
                   marginBottom: "1.1rem",
                 }}
               >
-                <em className="not-italic" style={{ color: "#dc2626" }}>Are you tired of doing Losses?</em>
+                <em
+                  className="not-italic"
+                  style={{
+                    color: "#FF4D4D", // solid fallback for webviews without gradient-text support
+                    background: "linear-gradient(92deg, #FF3B3B 0%, #FF6A2C 52%, #FFC531 100%)",
+                    WebkitBackgroundClip: "text",
+                    backgroundClip: "text",
+                    WebkitTextFillColor: "transparent",
+                    filter: "drop-shadow(0 2px 12px rgba(255,74,52,0.45))",
+                  }}
+                >
+                  Are you tired of doing Losses?
+                </em>
                 <br />
                 <em className="not-italic" style={{ color: "#FFFFFF" }}>Stop Guessing.</em>{" "}
                 <em className="not-italic" style={{ color: EMERALD }}>Start Reading the Chart.</em>
