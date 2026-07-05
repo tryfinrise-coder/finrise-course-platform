@@ -170,9 +170,10 @@ export default async function PlaybookLanding() {
                   <span className="inline-flex items-center gap-2"><CheckCircle2 size={17} /> Lifetime Access</span>
                 </div>
 
-                {primaryCTA("Get access", "hero")}
+                {/* hero CTA + trust line — desktop only (mobile uses the sticky bar) */}
+                <div className="hidden lg:block">{primaryCTA("Get access", "hero")}</div>
 
-                <div className="flex items-center justify-center gap-x-5 text-xs lg:justify-start" style={{ color: MUTE }}>
+                <div className="hidden items-center justify-center gap-x-5 text-xs lg:flex lg:justify-start" style={{ color: MUTE }}>
                   <span className="inline-flex items-center gap-1.5"><Lock size={13} /> Secure checkout</span>
                   <span className="inline-flex items-center gap-1.5"><Zap size={13} /> Instant access</span>
                 </div>
