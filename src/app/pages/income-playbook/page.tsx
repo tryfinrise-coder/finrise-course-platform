@@ -111,8 +111,9 @@ export default async function PlaybookLanding() {
       >
         <div className="mx-auto flex max-w-6xl items-center justify-between px-5 py-3">
           <Link href="/" className="flex items-center gap-2">
-            <span style={{ width: 28, height: 28, borderRadius: 8, background: G_HERO, display: "inline-flex", alignItems: "center", justifyContent: "center", fontWeight: 900, color: "#fff" }}>F</span>
-            <span style={{ fontWeight: 800, letterSpacing: "-0.01em", color: "#fff" }}>Finrise</span>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/finrise-icon.svg" width={30} height={30} alt="Finrise" className="rounded-md" />
+            <span className="text-lg font-extrabold tracking-tight" style={{ color: "#fff", letterSpacing: "-0.02em" }}>Finrise</span>
           </Link>
           <div className="hidden sm:block">{primaryCTA("Get the Playbook", "header")}</div>
         </div>
@@ -455,8 +456,9 @@ export default async function PlaybookLanding() {
       <footer style={{ background: INK, borderTop: `1px solid ${LINE}` }}>
         <div className="mx-auto max-w-6xl px-5 py-10 text-center">
           <div className="flex items-center justify-center gap-2">
-            <span style={{ width: 26, height: 26, borderRadius: 7, background: G_HERO, display: "inline-flex", alignItems: "center", justifyContent: "center", fontWeight: 900, color: "#fff", fontSize: "0.8rem" }}>F</span>
-            <span style={{ fontWeight: 800, color: "#fff" }}>Finrise</span>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/finrise-icon.svg" width={26} height={26} alt="Finrise" className="rounded-md" />
+            <span className="text-lg font-extrabold tracking-tight" style={{ color: "#fff", letterSpacing: "-0.02em" }}>Finrise</span>
           </div>
           <p style={{ marginTop: 12, fontSize: "0.72rem", lineHeight: 1.6, color: MUTE, maxWidth: 620, margin: "12px auto 0" }}>
             © 2026 Finrise. This guide is educational and shares one creator's experience; it is not financial, legal, or business advice, and no specific income is promised. Results depend entirely on your effort, market, and execution.
