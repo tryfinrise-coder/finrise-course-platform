@@ -86,7 +86,7 @@ export default async function PlaybookLanding() {
     "income_proof_amount",
   ]);
 
-  const primaryCTA = (label: string, track: string) => (
+  const primaryCTA = (label: string, track: string, compact = false) => (
     <div data-track="cta_click" data-track-label={track} className="inline-block max-w-full">
       <CheckoutButton
         slug={slug}
@@ -94,7 +94,11 @@ export default async function PlaybookLanding() {
         gold
         priceNow={priceNow}
         priceStrike={priceStrike}
-        className="h-12 rounded-2xl px-5 text-[14px] font-extrabold sm:h-14 sm:px-8 sm:text-[17px]"
+        className={
+          compact
+            ? "h-10 rounded-xl px-4 text-[13px] font-extrabold"
+            : "h-12 rounded-2xl px-5 text-[14px] font-extrabold sm:h-14 sm:px-8 sm:text-[17px]"
+        }
       />
     </div>
   );
@@ -111,28 +115,28 @@ export default async function PlaybookLanding() {
         className="sticky top-0 z-50"
         style={{ background: "rgba(11,7,19,0.82)", borderBottom: `1px solid ${LINE}`, backdropFilter: "blur(12px)" }}
       >
-        <div className="mx-auto flex max-w-6xl items-center justify-between px-5 py-3">
+        <div className="mx-auto flex max-w-6xl items-center justify-between px-5 py-2.5 lg:py-2">
           <Link href="/" className="flex items-center gap-2">
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/finrise-icon.svg" width={30} height={30} alt="Finrise" className="rounded-md" />
-            <span className="text-lg font-extrabold tracking-tight" style={{ color: "#fff", letterSpacing: "-0.02em" }}>Finrise</span>
+            <img src="/finrise-icon.svg" width={26} height={26} alt="Finrise" className="rounded-md" />
+            <span className="text-base font-extrabold tracking-tight sm:text-lg" style={{ color: "#fff", letterSpacing: "-0.02em" }}>Finrise</span>
           </Link>
-          <div className="hidden sm:block">{primaryCTA("Get access", "header")}</div>
+          <div className="hidden sm:block">{primaryCTA("Get access", "header", true)}</div>
         </div>
       </header>
 
       {/* ── HERO ──────────────────────────────────────────────────── */}
       <section style={{ position: "relative", background: `radial-gradient(1200px 500px at 80% -10%, rgba(236,72,153,0.28), transparent 60%), radial-gradient(1000px 500px at 0% 10%, rgba(139,92,246,0.30), transparent 55%), ${INK}` }}>
-        <div className="mx-auto max-w-6xl px-5 pb-14 pt-12 lg:pt-16">
+        <div className="mx-auto max-w-6xl px-5 pb-12 pt-10 lg:pb-8 lg:pt-6">
           <div className="grid items-center gap-10 lg:grid-cols-[1.05fr_0.95fr]">
             {/* copy */}
             <div className="text-center lg:text-left">
-              <span className="mb-6 inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-[11px] font-bold uppercase tracking-widest"
+              <span className="mb-5 inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-[11px] font-bold uppercase tracking-widest lg:mb-3"
                 style={{ background: "rgba(251,191,36,0.12)", color: AMBER, border: `1px solid rgba(251,191,36,0.35)` }}>
                 <Sparkles size={14} /> The Digital Course Playbook
               </span>
 
-              <h1 style={{ fontWeight: 900, fontSize: "clamp(2.3rem,6vw,4rem)", lineHeight: 1.06, letterSpacing: "-0.02em", color: "#fff" }}>
+              <h1 style={{ fontWeight: 900, fontSize: "clamp(2.3rem,5.4vw,3.6rem)", lineHeight: 1.05, letterSpacing: "-0.02em", color: "#fff" }}>
                 How I Earned<br />
                 <span style={{ background: G_TEXT, WebkitBackgroundClip: "text", backgroundClip: "text", WebkitTextFillColor: "transparent", color: AMBER, filter: "drop-shadow(0 2px 14px rgba(245,158,11,0.35))" }}>
                   ₹4.6 Lakhs
@@ -146,7 +150,7 @@ export default async function PlaybookLanding() {
               </p>
 
               {/* ── offer block ── */}
-              <div className="mt-9 flex flex-col items-center gap-6 lg:items-start">
+              <div className="mt-8 flex flex-col items-center gap-5 lg:mt-5 lg:items-start lg:gap-3.5">
                 {/* social proof */}
                 <div className="flex items-center gap-2 text-sm">
                   <span style={{ color: AMBER, letterSpacing: "1.5px" }}>★★★★★</span>
