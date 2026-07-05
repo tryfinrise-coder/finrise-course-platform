@@ -10,13 +10,17 @@ import {
   getSalesBySource,
   getSalesByCampaign,
   getRecentSales,
+  getCourseBreakdown,
+  listAnalyticsCourses,
   formatSeconds,
   friendlySource,
   purchaseSource,
 } from "@/lib/analytics";
+import { getProductBySlug } from "@/lib/products";
 import { formatPrice } from "@/lib/types";
 import { Card } from "@/components/ui/card";
-import { Users, Eye, Clock, MousePointerClick, IndianRupee, ShoppingCart, Target } from "lucide-react";
+import AnalyticsFilters from "@/components/admin/AnalyticsFilters";
+import { Users, Eye, Clock, MousePointerClick, IndianRupee, ShoppingCart, Target, Layers, Percent } from "lucide-react";
 
 export const dynamic = "force-dynamic";
 
@@ -37,36 +41,57 @@ function sourceColor(source: string): string {
   return "bg-violet-500/10 text-violet-400";
 }
 
-export default async function AnalyticsPage() {
+export default async function AnalyticsPage({
+  searchParams,
+}: {
+  searchParams: { course?: string; days?: string };
+}) {
+  const days = [7, 14, 30, 90].includes(Number(searchParams.days)) ? Number(searchParams.days) : 7;
+  const course = searchParams.course ?? "";
+  const pagePrefix = course ? `/pages/${course}` : null;
+  const selected = course ? await getProductBySlug(course) : undefined;
+  const productId = selected?.id ?? null;
+
   const [
     stats, daily, referrers, campaigns, recent, funnel, avgSecs,
     salesStats, salesBySource, salesByCampaign, recentSales,
+    courseRows, courses,
   ] = await Promise.all([
-    getVisitorStats(7),
-    getDailyVisits(14),
-    getTopReferrers(7),
-    getTopCampaigns(30),
-    getRecentViews(100),
-    getConversionFunnel(7),
-    getAvgTimeOnPage(7),
-    getSalesStats(30),
-    getSalesBySource(30),
-    getSalesByCampaign(90),
-    getRecentSales(50),
+    getVisitorStats(days, pagePrefix),
+    getDailyVisits(days, pagePrefix),
+    getTopReferrers(days, pagePrefix),
+    getTopCampaigns(days, pagePrefix),
+    getRecentViews(100, pagePrefix),
+    getConversionFunnel(days, pagePrefix),
+    getAvgTimeOnPage(days, pagePrefix),
+    getSalesStats(days, productId),
+    getSalesBySource(days, productId),
+    getSalesByCampaign(days, productId),
+    getRecentSales(50, productId),
+    getCourseBreakdown(days),
+    listAnalyticsCourses(),
   ]);
 
+  const rangeLabel = `${days} days`;
+  const scopeLabel = selected ? selected.title : "All courses";
   const maxSalesRev = salesBySource[0]?.revenue ?? 1;
   const maxCampRev = salesByCampaign[0]?.revenue ?? 1;
+  const maxCourseVisits = Math.max(1, ...courseRows.map((c) => c.visits));
 
   const ctaRate = funnel.visitors > 0
     ? ((funnel.ctaClicks / funnel.visitors) * 100).toFixed(1)
     : "0.0";
+  const visitToBuyRate = stats.unique > 0
+    ? ((salesStats.orders / stats.unique) * 100).toFixed(1)
+    : "0.0";
 
   const kpis = [
-    { label: "Visits (7 days)", value: stats.total.toLocaleString(), icon: Eye, color: "text-sky-400", bg: "bg-sky-500/10" },
-    { label: "Unique visitors (7d)", value: stats.unique.toLocaleString(), icon: Users, color: "text-emerald-400", bg: "bg-emerald-500/10" },
-    { label: "Avg time on page", value: formatSeconds(avgSecs), icon: Clock, color: "text-amber-400", bg: "bg-amber-500/10" },
-    { label: "CTA clicks (7d)", value: `${funnel.ctaClicks} (${ctaRate}%)`, icon: MousePointerClick, color: "text-pink-400", bg: "bg-pink-500/10" },
+    { label: `Visits (${rangeLabel})`, value: stats.total.toLocaleString(), icon: Eye, color: "text-sky-400", bg: "bg-sky-500/10", sub: `${stats.today} today` },
+    { label: `Unique visitors`, value: stats.unique.toLocaleString(), icon: Users, color: "text-emerald-400", bg: "bg-emerald-500/10", sub: "distinct IPs" },
+    { label: "Avg time on page", value: formatSeconds(avgSecs), icon: Clock, color: "text-amber-400", bg: "bg-amber-500/10", sub: "engaged sessions" },
+    { label: "Paid orders", value: salesStats.orders.toLocaleString(), icon: ShoppingCart, color: "text-fuchsia-400", bg: "bg-fuchsia-500/10", sub: formatPrice(salesStats.revenue) },
+    { label: "Visitor → buyer", value: `${visitToBuyRate}%`, icon: Percent, color: "text-violet-400", bg: "bg-violet-500/10", sub: "of unique visitors" },
+    { label: "CTA click rate", value: `${ctaRate}%`, icon: MousePointerClick, color: "text-pink-400", bg: "bg-pink-500/10", sub: `${funnel.ctaClicks} clicks` },
   ];
 
   const maxRef = referrers[0]?.count ?? 1;
@@ -74,25 +99,83 @@ export default async function AnalyticsPage() {
 
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <h2 className="font-display text-2xl font-extrabold tracking-tight">Analytics</h2>
-        <span className="rounded-full bg-secondary px-2.5 py-1 text-xs font-semibold text-muted-foreground">
-          Live · your visitors
-        </span>
+      {/* Header + filters */}
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div>
+          <h2 className="font-display text-2xl font-extrabold tracking-tight">Analytics</h2>
+          <p className="mt-0.5 text-sm text-muted-foreground">
+            Showing <span className="font-semibold text-foreground">{scopeLabel}</span> · last {rangeLabel}
+          </p>
+        </div>
+        <AnalyticsFilters courses={courses} course={course} days={days} />
       </div>
 
+      {/* ============ MULTI-COURSE COMPARISON ============ */}
+      <Card className="overflow-hidden p-0">
+        <div className="flex items-center gap-2 border-b border-border px-5 py-3.5">
+          <Layers className="h-4 w-4 text-sky-400" />
+          <h3 className="text-sm font-bold">Course-by-course performance</h3>
+          <span className="ml-auto text-xs text-muted-foreground">last {rangeLabel}</span>
+        </div>
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="border-b border-border bg-secondary/40 text-left text-[11px] uppercase tracking-wider text-muted-foreground">
+                <th className="px-5 py-2.5 font-semibold">Course</th>
+                <th className="px-4 py-2.5 text-right font-semibold">Visits</th>
+                <th className="px-4 py-2.5 text-right font-semibold">Unique</th>
+                <th className="px-4 py-2.5 text-right font-semibold">Sales</th>
+                <th className="px-4 py-2.5 text-right font-semibold">Revenue</th>
+                <th className="px-4 py-2.5 text-right font-semibold">Conv.</th>
+                <th className="px-4 py-2.5 font-semibold" />
+              </tr>
+            </thead>
+            <tbody>
+              {courseRows.length === 0 && (
+                <tr><td colSpan={7} className="px-5 py-6 text-center text-sm text-muted-foreground">No course data yet.</td></tr>
+              )}
+              {courseRows.map((c) => (
+                <tr key={c.slug} className={`border-b border-border last:border-0 hover:bg-secondary/30 ${course === c.slug ? "bg-primary/5" : ""}`}>
+                  <td className="px-5 py-3">
+                    <a href={`/admin/analytics?course=${c.slug}&days=${days}`} className="font-semibold hover:underline">
+                      {c.title}
+                    </a>
+                    <div className="text-[11px] text-muted-foreground">/pages/{c.slug}</div>
+                  </td>
+                  <td className="px-4 py-3 text-right tabular-nums">{c.visits.toLocaleString()}</td>
+                  <td className="px-4 py-3 text-right tabular-nums">{c.unique.toLocaleString()}</td>
+                  <td className="px-4 py-3 text-right font-semibold tabular-nums">{c.orders.toLocaleString()}</td>
+                  <td className="px-4 py-3 text-right font-semibold tabular-nums">{formatPrice(c.revenue)}</td>
+                  <td className="px-4 py-3 text-right tabular-nums">
+                    <span className={c.cvr >= 3 ? "text-emerald-400" : c.cvr > 0 ? "text-amber-400" : "text-muted-foreground"}>
+                      {c.cvr.toFixed(1)}%
+                    </span>
+                  </td>
+                  <td className="px-4 py-3" style={{ minWidth: 90 }}>
+                    <div className="h-1.5 w-full overflow-hidden rounded-full bg-secondary">
+                      <div className="h-full rounded-full bg-sky-500" style={{ width: `${Math.round((c.visits / maxCourseVisits) * 100)}%` }} />
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        <p className="border-t border-border px-5 py-2.5 text-[11px] text-muted-foreground">
+          Conv. = paid orders ÷ unique visitors. Click a course to filter the whole dashboard below to it.
+        </p>
+      </Card>
+
       {/* KPI cards */}
-      <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-        {kpis.map(({ label, value, icon: Icon, color, bg }) => (
-          <Card key={label} className="flex items-start gap-3 p-4">
-            <span className={`mt-0.5 grid h-8 w-8 shrink-0 place-items-center rounded-lg ${bg}`}>
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
+        {kpis.map(({ label, value, icon: Icon, color, bg, sub }) => (
+          <Card key={label} className="p-4">
+            <span className={`grid h-8 w-8 place-items-center rounded-lg ${bg}`}>
               <Icon className={`h-4 w-4 ${color}`} />
             </span>
-            <div>
-              <div className="text-2xl font-extrabold leading-tight">{value}</div>
-              <div className="mt-0.5 text-xs text-muted-foreground">{label}</div>
-            </div>
+            <div className="mt-2.5 text-xl font-extrabold leading-tight">{value}</div>
+            <div className="mt-0.5 text-xs font-medium text-muted-foreground">{label}</div>
+            {sub && <div className="text-[11px] text-muted-foreground/70">{sub}</div>}
           </Card>
         ))}
       </div>
@@ -106,12 +189,12 @@ export default async function AnalyticsPage() {
         </span>
       </div>
 
-      {/* Sales KPIs (30 days) */}
+      {/* Sales KPIs */}
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
         {[
-          { label: "Revenue (30d)", value: formatPrice(salesStats.revenue), icon: IndianRupee, color: "text-emerald-400", bg: "bg-emerald-500/10" },
-          { label: "Paid orders (30d)", value: salesStats.orders.toLocaleString(), icon: ShoppingCart, color: "text-sky-400", bg: "bg-sky-500/10" },
-          { label: "Unique buyers (30d)", value: salesStats.buyers.toLocaleString(), icon: Target, color: "text-violet-400", bg: "bg-violet-500/10" },
+          { label: `Revenue (${rangeLabel})`, value: formatPrice(salesStats.revenue), icon: IndianRupee, color: "text-emerald-400", bg: "bg-emerald-500/10" },
+          { label: `Paid orders (${rangeLabel})`, value: salesStats.orders.toLocaleString(), icon: ShoppingCart, color: "text-sky-400", bg: "bg-sky-500/10" },
+          { label: `Unique buyers (${rangeLabel})`, value: salesStats.buyers.toLocaleString(), icon: Target, color: "text-violet-400", bg: "bg-violet-500/10" },
         ].map(({ label, value, icon: Icon, color, bg }) => (
           <Card key={label} className="flex items-start gap-3 p-4">
             <span className={`mt-0.5 grid h-8 w-8 shrink-0 place-items-center rounded-lg ${bg}`}>
@@ -129,7 +212,7 @@ export default async function AnalyticsPage() {
         {/* Revenue by source */}
         <Card className="overflow-hidden p-0">
           <div className="border-b border-border px-5 py-3.5">
-            <h3 className="text-sm font-bold">Revenue by source (30 days)</h3>
+            <h3 className="text-sm font-bold">Revenue by source ({rangeLabel})</h3>
             <p className="mt-0.5 text-xs text-muted-foreground">Where your paying customers came from.</p>
           </div>
           <div className="divide-y divide-border">
@@ -160,7 +243,7 @@ export default async function AnalyticsPage() {
         {/* Revenue by campaign */}
         <Card className="overflow-hidden p-0">
           <div className="border-b border-border px-5 py-3.5">
-            <h3 className="text-sm font-bold">Revenue by campaign (90 days)</h3>
+            <h3 className="text-sm font-bold">Revenue by campaign ({rangeLabel})</h3>
             <p className="mt-0.5 text-xs text-muted-foreground">Which specific ad / UTM campaign converts to money.</p>
           </div>
           <div className="overflow-x-auto">
@@ -263,7 +346,7 @@ export default async function AnalyticsPage() {
 
       {/* Conversion funnel */}
       <Card className="p-5">
-        <h3 className="mb-4 text-sm font-bold">Conversion funnel — last 7 days</h3>
+        <h3 className="mb-4 text-sm font-bold">Conversion funnel — last {rangeLabel}</h3>
         {funnel.visitors === 0 ? (
           <p className="text-sm text-muted-foreground">No session data yet. Funnel populates once visitors land on your pages.</p>
         ) : (
@@ -299,7 +382,7 @@ export default async function AnalyticsPage() {
         {/* Daily visits table */}
         <Card className="overflow-hidden p-0">
           <div className="border-b border-border px-5 py-3.5">
-            <h3 className="text-sm font-bold">Daily visits — last 14 days</h3>
+            <h3 className="text-sm font-bold">Daily visits — last {rangeLabel}</h3>
           </div>
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
@@ -333,7 +416,7 @@ export default async function AnalyticsPage() {
         {/* Top sources */}
         <Card className="overflow-hidden p-0">
           <div className="border-b border-border px-5 py-3.5">
-            <h3 className="text-sm font-bold">Top sources (7 days)</h3>
+            <h3 className="text-sm font-bold">Top sources ({rangeLabel})</h3>
           </div>
           <div className="divide-y divide-border">
             {referrers.length === 0 && (
@@ -362,7 +445,7 @@ export default async function AnalyticsPage() {
       {/* Facebook / UTM campaigns */}
       <Card className="overflow-hidden p-0">
         <div className="border-b border-border px-5 py-3.5">
-          <h3 className="text-sm font-bold">Ad campaigns — UTM tracking (30 days)</h3>
+          <h3 className="text-sm font-bold">Ad campaigns — UTM tracking ({rangeLabel})</h3>
           <p className="mt-0.5 text-xs text-muted-foreground">
             Add <code className="rounded bg-secondary px-1 py-0.5">?utm_source=facebook&amp;utm_campaign=your_ad</code> to your Facebook ad URLs to see them here.
           </p>

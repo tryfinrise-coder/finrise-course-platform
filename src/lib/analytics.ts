@@ -51,43 +51,58 @@ export function friendlySource(referrer: string | null): string {
   }
 }
 
-export async function getVisitorStats(days = 7): Promise<VisitorStats> {
+// Optional "scope to one course's pages" filter. A course landing page lives at
+// /pages/<slug>, so we match page_views/page_events on that path prefix.
+function pageScope(pagePrefix?: string | null): { clause: string; params: string[] } {
+  if (!pagePrefix) return { clause: "", params: [] };
+  return { clause: " AND page LIKE ?", params: [pagePrefix + "%"] };
+}
+// Optional "scope to one product" filter for the sales tables.
+function productScope(productId?: number | null): { clause: string; params: number[] } {
+  if (!productId) return { clause: "", params: [] };
+  return { clause: " AND product_id = ?", params: [productId] };
+}
+
+export async function getVisitorStats(days = 7, pagePrefix?: string | null): Promise<VisitorStats> {
+  const s = pageScope(pagePrefix);
   const rows = await query<{ total: number; unique: number; today: number }>(
     `SELECT
        COUNT(*)                                                          AS total,
        COUNT(DISTINCT ip)                                                AS \`unique\`,
        SUM(CASE WHEN DATE(created_at) = CURDATE() THEN 1 ELSE 0 END)   AS today
      FROM page_views
-     WHERE created_at >= DATE_SUB(NOW(), INTERVAL ? DAY)`,
-    [days]
+     WHERE created_at >= DATE_SUB(NOW(), INTERVAL ? DAY)${s.clause}`,
+    [days, ...s.params]
   );
   const r = rows[0];
   return { total: Number(r?.total ?? 0), unique: Number(r?.unique ?? 0), today: Number(r?.today ?? 0) };
 }
 
-export async function getDailyVisits(days = 14): Promise<DailyRow[]> {
+export async function getDailyVisits(days = 14, pagePrefix?: string | null): Promise<DailyRow[]> {
+  const s = pageScope(pagePrefix);
   return query<DailyRow>(
     `SELECT
        DATE(created_at)      AS date,
        COUNT(*)              AS total,
        COUNT(DISTINCT ip)    AS \`unique\`
      FROM page_views
-     WHERE created_at >= DATE_SUB(NOW(), INTERVAL ? DAY)
+     WHERE created_at >= DATE_SUB(NOW(), INTERVAL ? DAY)${s.clause}
      GROUP BY DATE(created_at)
      ORDER BY date DESC`,
-    [days]
+    [days, ...s.params]
   );
 }
 
-export async function getTopReferrers(days = 7): Promise<ReferrerRow[]> {
+export async function getTopReferrers(days = 7, pagePrefix?: string | null): Promise<ReferrerRow[]> {
+  const s = pageScope(pagePrefix);
   const rows = await query<{ referrer: string | null; count: number }>(
     `SELECT referrer, COUNT(*) AS count
      FROM page_views
-     WHERE created_at >= DATE_SUB(NOW(), INTERVAL ? DAY)
+     WHERE created_at >= DATE_SUB(NOW(), INTERVAL ? DAY)${s.clause}
      GROUP BY referrer
      ORDER BY count DESC
      LIMIT 15`,
-    [days]
+    [days, ...s.params]
   );
   // Merge by friendly name
   const map = new Map<string, number>();
@@ -100,7 +115,8 @@ export async function getTopReferrers(days = 7): Promise<ReferrerRow[]> {
     .sort((a, b) => b.count - a.count);
 }
 
-export async function getTopCampaigns(days = 30): Promise<CampaignRow[]> {
+export async function getTopCampaigns(days = 30, pagePrefix?: string | null): Promise<CampaignRow[]> {
+  const s = pageScope(pagePrefix);
   return query<CampaignRow>(
     `SELECT
        COALESCE(utm_source,   'organic') AS utm_source,
@@ -109,11 +125,11 @@ export async function getTopCampaigns(days = 30): Promise<CampaignRow[]> {
        COUNT(*)                          AS count
      FROM page_views
      WHERE created_at >= DATE_SUB(NOW(), INTERVAL ? DAY)
-       AND utm_source IS NOT NULL
+       AND utm_source IS NOT NULL${s.clause}
      GROUP BY utm_source, utm_medium, utm_campaign
      ORDER BY count DESC
      LIMIT 20`,
-    [days]
+    [days, ...s.params]
   );
 }
 
@@ -125,20 +141,21 @@ export interface ConversionFunnel {
   ctaClicks: number;
 }
 
-export async function getConversionFunnel(days = 7): Promise<ConversionFunnel> {
+export async function getConversionFunnel(days = 7, pagePrefix?: string | null): Promise<ConversionFunnel> {
+  const s = pageScope(pagePrefix);
   const vRows = await query<{ n: number }>(
     `SELECT COUNT(DISTINCT session_id) AS n
      FROM page_views
      WHERE created_at >= DATE_SUB(NOW(), INTERVAL ? DAY)
-       AND session_id IS NOT NULL`,
-    [days]
+       AND session_id IS NOT NULL${s.clause}`,
+    [days, ...s.params]
   );
   const eRows = await query<{ event: string; value: string; n: number }>(
     `SELECT event, value, COUNT(DISTINCT session_id) AS n
      FROM page_events
-     WHERE created_at >= DATE_SUB(NOW(), INTERVAL ? DAY)
+     WHERE created_at >= DATE_SUB(NOW(), INTERVAL ? DAY)${s.clause}
      GROUP BY event, value`,
-    [days]
+    [days, ...s.params]
   );
   const get = (ev: string, val: string) =>
     Number(eRows.find((r) => r.event === ev && r.value === val)?.n ?? 0);
@@ -154,14 +171,15 @@ export async function getConversionFunnel(days = 7): Promise<ConversionFunnel> {
   };
 }
 
-export async function getAvgTimeOnPage(days = 7): Promise<number> {
+export async function getAvgTimeOnPage(days = 7, pagePrefix?: string | null): Promise<number> {
+  const s = pageScope(pagePrefix);
   const rows = await query<{ avg_secs: number }>(
     `SELECT AVG(CAST(REPLACE(value, 's', '') AS UNSIGNED)) AS avg_secs
      FROM page_events
      WHERE event = 'time_on_page'
        AND created_at >= DATE_SUB(NOW(), INTERVAL ? DAY)
-       AND CAST(REPLACE(value, 's', '') AS UNSIGNED) BETWEEN 3 AND 1800`,
-    [days]
+       AND CAST(REPLACE(value, 's', '') AS UNSIGNED) BETWEEN 3 AND 1800${s.clause}`,
+    [days, ...s.params]
   );
   return Math.round(Number(rows[0]?.avg_secs ?? 0));
 }
@@ -173,13 +191,15 @@ export function formatSeconds(secs: number): string {
   return m > 0 ? `${m}m ${s}s` : `${s}s`;
 }
 
-export async function getRecentViews(limit = 100): Promise<RecentView[]> {
+export async function getRecentViews(limit = 100, pagePrefix?: string | null): Promise<RecentView[]> {
+  const s = pageScope(pagePrefix);
   return query<RecentView>(
     `SELECT id, ip, page, referrer, utm_source, utm_campaign, created_at
      FROM page_views
+     ${pagePrefix ? "WHERE page LIKE ?" : ""}
      ORDER BY created_at DESC
      LIMIT ?`,
-    [limit]
+    pagePrefix ? [s.params[0], limit] : [limit]
   );
 }
 
@@ -209,13 +229,14 @@ export interface SalesStats {
   buyers: number; // distinct emails
 }
 
-export async function getSalesStats(days = 30): Promise<SalesStats> {
+export async function getSalesStats(days = 30, productId?: number | null): Promise<SalesStats> {
+  const s = productScope(productId);
   const rows = await query<{ orders: number; revenue: number; buyers: number }>(
     `SELECT COUNT(*) AS orders, COALESCE(SUM(amount), 0) AS revenue, COUNT(DISTINCT email) AS buyers
      FROM course_purchases
      WHERE status = 'paid'
-       AND COALESCE(paid_at, created_at) >= DATE_SUB(NOW(), INTERVAL ? DAY)`,
-    [days]
+       AND COALESCE(paid_at, created_at) >= DATE_SUB(NOW(), INTERVAL ? DAY)${s.clause}`,
+    [days, ...s.params]
   );
   const r = rows[0];
   return { orders: Number(r?.orders ?? 0), revenue: Number(r?.revenue ?? 0), buyers: Number(r?.buyers ?? 0) };
@@ -228,13 +249,14 @@ export interface SalesSourceRow {
 }
 
 /** Paid sales grouped by friendly source (UTM source first, else referrer). */
-export async function getSalesBySource(days = 30): Promise<SalesSourceRow[]> {
+export async function getSalesBySource(days = 30, productId?: number | null): Promise<SalesSourceRow[]> {
+  const sc = productScope(productId);
   const rows = await query<{ utm_source: string | null; referrer: string | null; amount: number }>(
     `SELECT utm_source, referrer, amount
      FROM course_purchases
      WHERE status = 'paid'
-       AND COALESCE(paid_at, created_at) >= DATE_SUB(NOW(), INTERVAL ? DAY)`,
-    [days]
+       AND COALESCE(paid_at, created_at) >= DATE_SUB(NOW(), INTERVAL ? DAY)${sc.clause}`,
+    [days, ...sc.params]
   );
   const map = new Map<string, { orders: number; revenue: number }>();
   for (const r of rows) {
@@ -257,7 +279,8 @@ export interface SalesCampaignRow {
 }
 
 /** Paid sales grouped by UTM campaign — the row that tells you which ad converts. */
-export async function getSalesByCampaign(days = 90): Promise<SalesCampaignRow[]> {
+export async function getSalesByCampaign(days = 90, productId?: number | null): Promise<SalesCampaignRow[]> {
+  const sc = productScope(productId);
   return query<SalesCampaignRow>(
     `SELECT
        COALESCE(utm_source,   'organic') AS utm_source,
@@ -266,11 +289,11 @@ export async function getSalesByCampaign(days = 90): Promise<SalesCampaignRow[]>
        COALESCE(SUM(amount), 0)          AS revenue
      FROM course_purchases
      WHERE status = 'paid'
-       AND COALESCE(paid_at, created_at) >= DATE_SUB(NOW(), INTERVAL ? DAY)
+       AND COALESCE(paid_at, created_at) >= DATE_SUB(NOW(), INTERVAL ? DAY)${sc.clause}
      GROUP BY utm_source, utm_campaign
      ORDER BY revenue DESC
      LIMIT 30`,
-    [days]
+    [days, ...sc.params]
   );
 }
 
@@ -289,13 +312,75 @@ export interface RecentSale {
 }
 
 /** Most recent paid purchases with their full attribution, newest first. */
-export async function getRecentSales(limit = 50): Promise<RecentSale[]> {
+export async function getRecentSales(limit = 50, productId?: number | null): Promise<RecentSale[]> {
+  const sc = productScope(productId);
   return query<RecentSale>(
     `SELECT id, email, name, ip, amount, utm_source, utm_medium, utm_campaign, referrer, paid_at, created_at
      FROM course_purchases
-     WHERE status = 'paid'
+     WHERE status = 'paid'${sc.clause}
      ORDER BY COALESCE(paid_at, created_at) DESC
      LIMIT ?`,
-    [limit]
+    [...sc.params, limit]
+  );
+}
+
+// ── Multi-course comparison + the filter list ─────────────────────
+export interface CourseRow {
+  slug: string;
+  title: string;
+  visits: number;
+  unique: number;
+  orders: number;
+  revenue: number; // paise
+  cvr: number; // orders ÷ unique visitors, as a %
+}
+
+/** Per-course rollup: visits, unique, sales, revenue and conversion — the multi-course view. */
+export async function getCourseBreakdown(days = 30): Promise<CourseRow[]> {
+  const products = await query<{ id: number; slug: string; title: string }>(
+    "SELECT id, slug, title FROM products ORDER BY created_at ASC"
+  );
+  const views = await query<{ page: string; total: number; uniq: number }>(
+    `SELECT page, COUNT(*) AS total, COUNT(DISTINCT ip) AS uniq
+     FROM page_views
+     WHERE page LIKE '/pages/%' AND created_at >= DATE_SUB(NOW(), INTERVAL ? DAY)
+     GROUP BY page`,
+    [days]
+  );
+  const sales = await query<{ product_id: number; orders: number; revenue: number }>(
+    `SELECT product_id, COUNT(*) AS orders, COALESCE(SUM(amount), 0) AS revenue
+     FROM course_purchases
+     WHERE status = 'paid' AND product_id IS NOT NULL
+       AND COALESCE(paid_at, created_at) >= DATE_SUB(NOW(), INTERVAL ? DAY)
+     GROUP BY product_id`,
+    [days]
+  );
+
+  const viewsBySlug = new Map<string, { total: number; uniq: number }>();
+  for (const v of views) {
+    const m = v.page.match(/^\/pages\/([^/?#]+)/);
+    if (!m) continue;
+    const cur = viewsBySlug.get(m[1]) ?? { total: 0, uniq: 0 };
+    cur.total += Number(v.total);
+    cur.uniq += Number(v.uniq);
+    viewsBySlug.set(m[1], cur);
+  }
+  const salesById = new Map<number, { orders: number; revenue: number }>();
+  for (const s of sales) salesById.set(Number(s.product_id), { orders: Number(s.orders), revenue: Number(s.revenue) });
+
+  return products
+    .map((p) => {
+      const v = viewsBySlug.get(p.slug) ?? { total: 0, uniq: 0 };
+      const s = salesById.get(p.id) ?? { orders: 0, revenue: 0 };
+      const cvr = v.uniq > 0 ? (s.orders / v.uniq) * 100 : 0;
+      return { slug: p.slug, title: p.title, visits: v.total, unique: v.uniq, orders: s.orders, revenue: s.revenue, cvr };
+    })
+    .sort((a, b) => b.visits - a.visits || b.revenue - a.revenue);
+}
+
+/** The course list used to populate the analytics filter dropdown. */
+export async function listAnalyticsCourses(): Promise<{ slug: string; title: string }[]> {
+  return query<{ slug: string; title: string }>(
+    "SELECT slug, title FROM products ORDER BY created_at ASC"
   );
 }
