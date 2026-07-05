@@ -15,6 +15,7 @@ import { createUser, findUserByEmail } from "@/lib/users";
 import { generatePassword } from "@/lib/passwords";
 import { grantEntitlement, revokeEntitlement } from "@/lib/entitlements";
 import { sendCredentialsEmail } from "@/lib/email";
+import { setSetting } from "@/lib/settings";
 import type { ProductType } from "@/lib/types";
 
 const STORAGE_DIR = path.join(process.cwd(), "storage");
@@ -124,6 +125,31 @@ export async function setHeroMediaAction(formData: FormData) {
     published: existing.published === 1,
   });
   revalidatePath(`/admin/products/${id}`);
+}
+
+// -------------------------------------------------- playbook income proof
+// Upload/replace the income screenshot shown on /pages/income-playbook and
+// optionally set the caption + amount label beneath it.
+export async function setIncomeProofAction(formData: FormData) {
+  await requireAdmin();
+  const image = formData.get("image") as File | null;
+  if (image && image.size > 0) {
+    const url = await savePublicUpload(image, "proof");
+    await setSetting("income_proof_image", url);
+  }
+  const caption = String(formData.get("caption") || "").trim();
+  const amount = String(formData.get("amount") || "").trim();
+  await setSetting("income_proof_caption", caption);
+  await setSetting("income_proof_amount", amount);
+  revalidatePath("/admin/settings");
+  revalidatePath("/pages/income-playbook");
+}
+
+export async function clearIncomeProofAction() {
+  await requireAdmin();
+  await setSetting("income_proof_image", "");
+  revalidatePath("/admin/settings");
+  revalidatePath("/pages/income-playbook");
 }
 
 export async function createUserAction(formData: FormData) {

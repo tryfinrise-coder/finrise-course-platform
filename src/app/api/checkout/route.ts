@@ -55,9 +55,13 @@ export async function POST(req: NextRequest) {
     let amount = original;
     let appliedCode: string | null = null;
 
+    // The playbook sells at a fixed launch price, exempt from the site-wide
+    // auto-apply discount (a typed code can still apply to it).
+    const autoDiscountAllowed = product.slug !== "income-playbook";
+
     // A typed code takes priority; otherwise fall back to any auto-apply offer.
     let d = code ? await validateDiscount(code, amount, product.id) : null;
-    if (!d) d = await getAutoApplyDiscount(amount, product.id);
+    if (!d && autoDiscountAllowed) d = await getAutoApplyDiscount(amount, product.id);
     if (d) {
       amount = d.kind === "percent" ? Math.round(amount * (1 - d.value / 100)) : Math.max(0, amount - d.value);
       appliedCode = d.code;

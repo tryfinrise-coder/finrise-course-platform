@@ -306,6 +306,13 @@ const SCHEMA: string[] = [
      FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE SET NULL
    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4`,
 
+  // ---- key/value site settings (editable content like the income-proof image) ----
+  `CREATE TABLE IF NOT EXISTS site_settings (
+     name       VARCHAR(100) PRIMARY KEY,
+     value      TEXT,
+     updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+   ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4`,
+
   // additive: attribution snapshot frozen onto each purchase so paid sales can
   // be traced back to the ad / source / campaign that produced them, even if
   // the page_views rows are later pruned.
