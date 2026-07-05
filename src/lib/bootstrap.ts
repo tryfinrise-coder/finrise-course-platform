@@ -1,10 +1,11 @@
 import "server-only";
 import { execute, ensureSchema } from "./db";
 import { findUserByEmail, createUser } from "./users";
-import { getProductBySlug, createProduct } from "./products";
+import { getProductBySlug, createProduct, updateProduct } from "./products";
 import { grantEntitlement } from "./entitlements";
 import { PATTERN_ORDER, PATTERNS } from "@/data/patterns";
 import { FOUNDATIONS } from "@/data/courseContent";
+import { PLAYBOOK_MODULES } from "@/data/playbookContent";
 
 // Idempotent first-run setup: schema, default admin, the flagship candlestick
 // course with one lesson per pattern, and a sample PDF product. The promise is
@@ -28,6 +29,7 @@ async function bootstrap(): Promise<void> {
     await seedAdmin();
     await seedCandlestickCourse();
     await seedSamplePdf();
+    await seedPlaybook();
   } catch (err) {
     // Reset so a later request can retry (e.g. transient connection issues on
     // first boot before MySQL is reachable).
@@ -104,6 +106,57 @@ async function seedSamplePdf() {
     });
   }
   await grantAdminAccess(pdf.id);
+}
+
+async function seedPlaybook() {
+  // The digital-course playbook sold from /pages/income-playbook. It's a full
+  // course (text lessons + the 15-niche AI prompt library) plus a downloadable
+  // PDF (file_path). Sold via the bespoke landing page, delivered as a course.
+  const title = "The Digital Course Playbook — Build & Sell With AI";
+  const description =
+    "The exact step-by-step system behind a ₹4.6 lakh month selling one digital course — build it with AI, host it, run ads, and scale. Includes copy-paste AI prompts for 15 niches and a 14-day launch checklist.";
+
+  let pb = await getProductBySlug("income-playbook");
+  if (!pb) {
+    pb = await createProduct({
+      slug: "income-playbook",
+      title,
+      type: "course",
+      price: 29900, // ₹299 launch price
+      description,
+      file_path: "income-playbook.pdf",
+    });
+  } else if (pb.type !== "course") {
+    // Upgrade an earlier PDF-only seed to a full course (idempotent).
+    await updateProduct(pb.id, {
+      slug: pb.slug,
+      title,
+      type: "course",
+      price: pb.price,
+      description,
+      file_path: pb.file_path ?? "income-playbook.pdf",
+      cover: pb.cover,
+      hero_video: pb.hero_video,
+      published: pb.published === 1,
+    });
+    pb = (await getProductBySlug("income-playbook"))!;
+  }
+
+  // Seed the module lessons (text lessons, no pattern_key — rendered like the
+  // candlestick Foundations from PLAYBOOK_BY_SLUG).
+  for (let i = 0; i < PLAYBOOK_MODULES.length; i++) {
+    const m = PLAYBOOK_MODULES[i];
+    await execute(
+      `INSERT INTO lessons (product_id, slug, title, sort_order, pattern_key, body)
+       VALUES (?, ?, ?, ?, NULL, ?)
+       ON DUPLICATE KEY UPDATE
+         title = VALUES(title), sort_order = VALUES(sort_order),
+         pattern_key = NULL, body = VALUES(body)`,
+      [pb.id, m.slug, m.title, i, m.tagline]
+    );
+  }
+
+  await grantAdminAccess(pb.id);
 }
 
 async function grantAdminAccess(productId: number) {

@@ -47,11 +47,20 @@ export default async function CoursePage({ params }: { params: { course: string 
     .sort((a, b) => a.sort_order - b.sort_order);
   const resources = await listResources(product.id);
   const plainResources = resources.filter((r) => !r.description_html);
-  const meta = [
-    { icon: GraduationCap, label: `${lessons.length} interactive lessons` },
-    { icon: Layers, label: `${PATTERN_FAMILIES.length} pattern families` },
-    { icon: BarChart3, label: "Live, animated price action" },
-  ];
+  // The candlestick course has bespoke pattern families + the Sculptor tool;
+  // every other course renders as a generic, ordered list of text lessons.
+  const isCandlestick = product.slug === "candlestick-mastery";
+  const meta = isCandlestick
+    ? [
+        { icon: GraduationCap, label: `${lessons.length} interactive lessons` },
+        { icon: Layers, label: `${PATTERN_FAMILIES.length} pattern families` },
+        { icon: BarChart3, label: "Live, animated price action" },
+      ]
+    : [
+        { icon: GraduationCap, label: `${lessons.length} lessons` },
+        { icon: Layers, label: "Copy-paste AI prompts" },
+        { icon: BarChart3, label: "Step-by-step playbook" },
+      ];
 
   return (
     <AppShell active="course" title="My Course">
@@ -80,12 +89,14 @@ export default async function CoursePage({ params }: { params: { course: string 
                 <div className="h-full rounded-full bg-emerald-600" style={{ width: `${pct}%` }} />
               </div>
             </div>
-            <Link
-              href={`/courses/${product.slug}/sculptor`}
-              className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 transition-colors hover:border-emerald-300 hover:bg-slate-50"
-            >
-              <FlaskConical className="h-4 w-4 text-emerald-600" /> Candle Sculptor
-            </Link>
+            {isCandlestick && (
+              <Link
+                href={`/courses/${product.slug}/sculptor`}
+                className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 transition-colors hover:border-emerald-300 hover:bg-slate-50"
+              >
+                <FlaskConical className="h-4 w-4 text-emerald-600" /> Candle Sculptor
+              </Link>
+            )}
           </div>
         </div>
 
@@ -138,8 +149,12 @@ export default async function CoursePage({ params }: { params: { course: string 
           <section>
             <div className="mb-3 flex items-end justify-between">
               <div>
-                <h2 className="text-lg font-bold text-slate-900">Start here · Foundations</h2>
-                <p className="text-sm text-slate-500">How markets and candlesticks work — the groundwork every chart reader needs.</p>
+                <h2 className="text-lg font-bold text-slate-900">{isCandlestick ? "Start here · Foundations" : "Course lessons"}</h2>
+                <p className="text-sm text-slate-500">
+                  {isCandlestick
+                    ? "How markets and candlesticks work — the groundwork every chart reader needs."
+                    : "Work through these in order — each one is a step you do, with copy-paste AI prompts."}
+                </p>
               </div>
               <span className="shrink-0 rounded-full bg-slate-100 px-2.5 py-1 text-xs font-semibold text-slate-600">
                 {foundations.filter((l) => progress[l.id]?.status === "completed").length}/{foundations.length}
@@ -171,8 +186,8 @@ export default async function CoursePage({ params }: { params: { course: string 
           </section>
         )}
 
-        {/* lessons grouped by family */}
-        {PATTERN_FAMILIES.map((family) => {
+        {/* lessons grouped by family (candlestick course only) */}
+        {isCandlestick && PATTERN_FAMILIES.map((family) => {
           const famLessons = family.keys.map((k) => byKey.get(k)).filter(Boolean) as typeof lessons;
           if (famLessons.length === 0) return null;
           const famDone = famLessons.filter((l) => progress[l.id]?.status === "completed").length;

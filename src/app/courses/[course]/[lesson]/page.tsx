@@ -18,6 +18,8 @@ import SupportResistance from "@/components/course/SupportResistance";
 import RiskManagementCharts from "@/components/course/RiskManagementCharts";
 import LessonModulesNav from "@/components/course/LessonModulesNav";
 import { PATTERN_GUIDE, FOUNDATION_BY_SLUG } from "@/data/courseContent";
+import { PLAYBOOK_BY_SLUG } from "@/data/playbookContent";
+import NichePrompts from "@/components/course/NichePrompts";
 import { getSimpleContent } from "@/courses/candlestick-mastery";
 
 export const dynamic = "force-dynamic";
@@ -241,6 +243,52 @@ export default async function LessonPage({
                   )}
                 </section>
               ))}
+
+              <section className="glass card-pad">
+                <h2 style={{ fontSize: 16, color: "var(--brand-3)", marginBottom: 10 }}>Key takeaways</h2>
+                <ul style={{ margin: 0, paddingLeft: 18, display: "grid", gap: 6 }}>
+                  {f.takeaways.map((t, i) => (
+                    <li key={i} style={{ fontSize: 14, lineHeight: 1.5 }}>{t}</li>
+                  ))}
+                </ul>
+              </section>
+
+              <div style={{ display: "flex", justifyContent: "flex-end" }}>
+                <FoundationComplete onComplete={complete} nextHref={nextHref} nextLabel={nextLabel} />
+              </div>
+            </div>
+          );
+        })()
+      ) : PLAYBOOK_BY_SLUG[lesson.slug] ? (
+        (() => {
+          const f = PLAYBOOK_BY_SLUG[lesson.slug];
+          return (
+            <div style={{ marginTop: 16, display: "grid", gap: 16 }}>
+              {f.sections.map((s, i) => (
+                <section key={i} className="glass card-pad">
+                  <h2 style={{ fontSize: 18, margin: "0 0 10px" }}>{s.heading}</h2>
+                  <p style={{ margin: 0, fontSize: 15, lineHeight: 1.75 }}>{s.body}</p>
+                  {s.example && (
+                    <div
+                      style={{
+                        marginTop: 14,
+                        padding: "12px 14px",
+                        borderRadius: 10,
+                        background: "var(--accent, rgba(24,168,122,0.08))",
+                        borderLeft: "3px solid var(--brand)",
+                      }}
+                    >
+                      <h3 style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--brand)", margin: "0 0 4px" }}>
+                        Example
+                      </h3>
+                      <p style={{ margin: 0, fontSize: 14, lineHeight: 1.65 }}>{s.example}</p>
+                    </div>
+                  )}
+                </section>
+              ))}
+
+              {/* The prompt-library lesson renders all 15 niches below its intro */}
+              {lesson.slug === "ai-prompt-library" && <NichePrompts />}
 
               <section className="glass card-pad">
                 <h2 style={{ fontSize: 16, color: "var(--brand-3)", marginBottom: 10 }}>Key takeaways</h2>
