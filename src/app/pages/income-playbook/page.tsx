@@ -126,7 +126,7 @@ export default async function PlaybookLanding() {
         <div className="mx-auto max-w-6xl px-5 pb-14 pt-12 lg:pt-16">
           <div className="grid items-center gap-10 lg:grid-cols-[1.05fr_0.95fr]">
             {/* copy */}
-            <div className="text-center lg:text-left">
+            <div className="text-left">
               <span className="mb-5 inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-[11px] font-bold uppercase tracking-widest"
                 style={{ background: "rgba(251,191,36,0.12)", color: AMBER, border: `1px solid rgba(251,191,36,0.35)` }}>
                 <Sparkles size={14} /> The Digital Course Playbook
@@ -141,12 +141,12 @@ export default async function PlaybookLanding() {
               <p style={{ marginTop: 14, fontSize: "clamp(1.1rem,2.5vw,1.35rem)", fontWeight: 700, color: "#fff", lineHeight: 1.35 }}>
                 selling <span style={{ color: AMBER }}>ONE</span> digital course — built with AI.
               </p>
-              <p style={{ marginTop: 12, fontSize: "1.02rem", lineHeight: 1.65, color: MUTE, maxWidth: 500, marginLeft: "auto", marginRight: "auto" }} className="lg:mx-0">
-                The complete playbook to build your course with AI, launch it, and scale to real income — <strong style={{ color: TEXT }}>41 pages, copy-paste prompts, and a 14-day launch checklist</strong>. No audience or tech skills needed.
+              <p style={{ marginTop: 12, fontSize: "1.08rem", lineHeight: 1.5, color: MUTE, maxWidth: 440 }}>
+                Build it with AI. Launch in 14 days. Get paid — <strong style={{ color: TEXT }}>even starting from zero.</strong>
               </p>
 
               {/* ── offer block ── */}
-              <div className="mt-7 flex flex-col items-center gap-4 lg:items-start">
+              <div className="mt-7 flex flex-col items-start gap-4">
                 {/* social proof */}
                 <div className="flex items-center gap-2 text-sm">
                   <span style={{ color: AMBER, letterSpacing: "1.5px" }}>★★★★★</span>
@@ -154,7 +154,7 @@ export default async function PlaybookLanding() {
                 </div>
 
                 {/* price */}
-                <div className="flex items-end justify-center gap-3 lg:justify-start" style={{ flexWrap: "wrap" }}>
+                <div className="flex items-end justify-start gap-3" style={{ flexWrap: "wrap" }}>
                   <span style={{ fontWeight: 900, fontSize: "clamp(2.2rem,6vw,2.7rem)", color: "#fff", lineHeight: 0.95 }}>{priceNow}</span>
                   <span style={{ fontSize: "1.1rem", color: MUTE, textDecoration: "line-through", paddingBottom: 5 }}>{priceStrike}</span>
                   {savePct > 0 && (
@@ -165,7 +165,7 @@ export default async function PlaybookLanding() {
                 </div>
 
                 {/* feature chips */}
-                <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-1.5 lg:justify-start" style={{ color: EMERALD, fontSize: "0.85rem", fontWeight: 600 }}>
+                <div className="flex flex-wrap items-center justify-start gap-x-4 gap-y-1.5" style={{ color: EMERALD, fontSize: "0.85rem", fontWeight: 600 }}>
                   <span className="inline-flex items-center gap-1.5"><CheckCircle2 size={15} /> Lifetime access</span>
                   <span className="inline-flex items-center gap-1.5"><CheckCircle2 size={15} /> Instant access</span>
                   <span className="inline-flex items-center gap-1.5"><CheckCircle2 size={15} /> One-time payment</span>
@@ -173,7 +173,7 @@ export default async function PlaybookLanding() {
 
                 {primaryCTA("Get access", "hero")}
 
-                <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-1 text-xs lg:justify-start" style={{ color: MUTE }}>
+                <div className="flex flex-wrap items-center justify-start gap-x-4 gap-y-1 text-xs" style={{ color: MUTE }}>
                   <span className="inline-flex items-center gap-1.5"><Lock size={13} /> Secure checkout</span>
                   <span className="inline-flex items-center gap-1.5"><FileText size={13} /> 41 pages · PDF</span>
                   <span className="inline-flex items-center gap-1.5"><Bot size={13} /> AI prompts included</span>
