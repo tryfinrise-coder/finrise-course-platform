@@ -132,7 +132,7 @@ export default async function PlaybookLanding() {
                 <Sparkles size={14} /> The Digital Course Playbook
               </span>
 
-              <h1 style={{ fontWeight: 900, fontSize: "clamp(1.95rem,5.2vw,3.4rem)", lineHeight: 1.08, letterSpacing: "-0.02em", color: "#fff" }}>
+              <h1 style={{ fontWeight: 900, fontSize: "clamp(2.3rem,6vw,4rem)", lineHeight: 1.06, letterSpacing: "-0.02em", color: "#fff" }}>
                 How I Earned<br />
                 <span style={{ background: G_TEXT, WebkitBackgroundClip: "text", backgroundClip: "text", WebkitTextFillColor: "transparent", color: AMBER, filter: "drop-shadow(0 2px 14px rgba(245,158,11,0.35))" }}>
                   ₹4.6 Lakhs
@@ -150,7 +150,7 @@ export default async function PlaybookLanding() {
                 {/* social proof */}
                 <div className="flex items-center gap-2 text-sm">
                   <span style={{ color: AMBER, letterSpacing: "1.5px" }}>★★★★★</span>
-                  <span style={{ color: MUTE }}>Loved by <strong style={{ color: "#fff" }}>5,600+</strong> students</span>
+                  <span style={{ color: MUTE }}><strong style={{ color: "#fff" }}>6,300+</strong> students loved it</span>
                 </div>
 
                 {/* price */}
@@ -219,7 +219,7 @@ export default async function PlaybookLanding() {
       <div style={{ borderTop: `1px solid ${LINE}`, borderBottom: `1px solid ${LINE}`, background: INK2 }}>
         <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-center gap-x-8 gap-y-3 px-5 py-4 text-center">
           {[
-            { n: "5,600+", l: "students started" },
+            { n: "6,300+", l: "students started" },
             { n: "15", l: "step-by-step lessons" },
             { n: "45+", l: "copy-paste AI prompts" },
             { n: "14 days", l: "to launch" },
@@ -490,7 +490,7 @@ export default async function PlaybookLanding() {
       </footer>
 
       {/* sticky mobile CTA (reused) */}
-      <StickyCTA slug={slug} priceNow={priceNow} priceStrike={priceStrike} label="Get access" />
+      <StickyCTA slug={slug} priceNow={priceNow} priceStrike={priceStrike} label="Get access" enrolled="6.3K+ Enrolled" />
     </div>
   );
 }

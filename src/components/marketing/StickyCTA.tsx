@@ -7,9 +7,10 @@ interface Props {
   priceNow: string;
   priceStrike: string | undefined;
   label?: string;
+  enrolled?: string;
 }
 
-export default function StickyCTA({ slug, priceNow, priceStrike, label = "Sign Up" }: Props) {
+export default function StickyCTA({ slug, priceNow, priceStrike, label = "Sign Up", enrolled = "5.6K+ Enrolled" }: Props) {
   return (
     <div
       className="lg:hidden"
@@ -37,7 +38,7 @@ export default function StickyCTA({ slug, priceNow, priceStrike, label = "Sign U
               aria-hidden="true"
               style={{ height: 7, width: 7, borderRadius: "50%", background: "#F4CE5E", boxShadow: "0 0 8px rgba(244,206,94,0.9)" }}
             />
-            5.6K+ Enrolled
+            {enrolled}
           </div>
           <div style={{ color: "rgba(255,255,255,0.9)", fontSize: "0.72rem", fontWeight: 600 }}>
             Lifetime access
