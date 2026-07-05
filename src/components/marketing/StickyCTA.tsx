@@ -6,9 +6,10 @@ interface Props {
   slug: string;
   priceNow: string;
   priceStrike: string | undefined;
+  label?: string;
 }
 
-export default function StickyCTA({ slug, priceNow, priceStrike }: Props) {
+export default function StickyCTA({ slug, priceNow, priceStrike, label = "Sign Up" }: Props) {
   return (
     <div
       className="lg:hidden"
@@ -45,7 +46,7 @@ export default function StickyCTA({ slug, priceNow, priceStrike }: Props) {
         <div data-track="cta_click" data-track-label="sticky_cta">
           <CheckoutButton
             slug={slug}
-            label="Sign Up"
+            label={label}
             gold
             priceNow={priceNow}
             priceStrike={priceStrike}

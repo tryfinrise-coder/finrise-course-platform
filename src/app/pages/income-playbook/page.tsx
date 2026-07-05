@@ -74,8 +74,10 @@ export default async function PlaybookLanding() {
   // the site-wide auto-apply discount (which is tuned for the flagship course and
   // would over-discount this lower-priced product). Checkout mirrors this exemption.
   const finalPrice = product?.price ?? 29900;
+  const anchorPaise = 199900; // ₹1,999 value anchor
   const priceNow = `${formatPrice(finalPrice)}/-`;
-  const priceStrike = "₹1,999/-"; // value anchor
+  const priceStrike = `${formatPrice(anchorPaise)}/-`;
+  const savePct = Math.max(0, Math.round((1 - finalPrice / anchorPaise) * 100));
   const slug = product?.slug ?? "income-playbook";
 
   const proof = await getSettings([
@@ -115,7 +117,7 @@ export default async function PlaybookLanding() {
             <img src="/finrise-icon.svg" width={30} height={30} alt="Finrise" className="rounded-md" />
             <span className="text-lg font-extrabold tracking-tight" style={{ color: "#fff", letterSpacing: "-0.02em" }}>Finrise</span>
           </Link>
-          <div className="hidden sm:block">{primaryCTA("Get the Playbook", "header")}</div>
+          <div className="hidden sm:block">{primaryCTA("Get access", "header")}</div>
         </div>
       </header>
 
@@ -136,24 +138,42 @@ export default async function PlaybookLanding() {
                   ₹4.6 Lakhs
                 </span><br />Last Month
               </h1>
-              <p style={{ marginTop: 14, fontSize: "clamp(1.05rem,2.4vw,1.3rem)", fontWeight: 700, color: "#fff" }}>
+              <p style={{ marginTop: 14, fontSize: "clamp(1.1rem,2.5vw,1.35rem)", fontWeight: 700, color: "#fff", lineHeight: 1.35 }}>
                 selling <span style={{ color: AMBER }}>ONE</span> digital course — built with AI.
               </p>
-              <p style={{ marginTop: 10, fontSize: "1.02rem", lineHeight: 1.6, color: MUTE, maxWidth: 520, marginLeft: "auto", marginRight: "auto" }} className="lg:mx-0">
-                Get the exact 41-page playbook: build your course with AI, host it, run ads, and scale — with copy-paste prompts and a 14-day launch checklist. No audience or tech skills needed.
+              <p style={{ marginTop: 12, fontSize: "1.02rem", lineHeight: 1.65, color: MUTE, maxWidth: 500, marginLeft: "auto", marginRight: "auto" }} className="lg:mx-0">
+                The complete playbook to build your course with AI, launch it, and scale to real income — <strong style={{ color: TEXT }}>41 pages, copy-paste prompts, and a 14-day launch checklist</strong>. No audience or tech skills needed.
               </p>
 
-              {/* price + CTA */}
+              {/* ── offer block ── */}
               <div className="mt-7 flex flex-col items-center gap-4 lg:items-start">
-                <div className="flex items-center gap-3" style={{ flexWrap: "wrap", justifyContent: "center" }}>
-                  <span style={{ fontWeight: 900, fontSize: "1.9rem", color: "#fff" }}>{priceNow}</span>
-                  <span style={{ fontSize: "1.05rem", color: MUTE, textDecoration: "line-through" }}>{priceStrike}</span>
-                  <span className="rounded-full px-3 py-1 text-xs font-extrabold" style={{ background: "rgba(16,185,129,0.16)", color: EMERALD }}>
-                    Lifetime access · instant download
-                  </span>
+                {/* social proof */}
+                <div className="flex items-center gap-2 text-sm">
+                  <span style={{ color: AMBER, letterSpacing: "1.5px" }}>★★★★★</span>
+                  <span style={{ color: MUTE }}>Loved by <strong style={{ color: "#fff" }}>5,600+</strong> students</span>
                 </div>
-                {primaryCTA("Get the Playbook", "hero")}
-                <div className="flex items-center gap-4 text-xs" style={{ color: MUTE }}>
+
+                {/* price */}
+                <div className="flex items-end justify-center gap-3 lg:justify-start" style={{ flexWrap: "wrap" }}>
+                  <span style={{ fontWeight: 900, fontSize: "clamp(2.2rem,6vw,2.7rem)", color: "#fff", lineHeight: 0.95 }}>{priceNow}</span>
+                  <span style={{ fontSize: "1.1rem", color: MUTE, textDecoration: "line-through", paddingBottom: 5 }}>{priceStrike}</span>
+                  {savePct > 0 && (
+                    <span className="rounded-md px-2 py-0.5 text-[12px] font-extrabold" style={{ background: EMERALD, color: "#04140d", marginBottom: 4 }}>
+                      SAVE {savePct}%
+                    </span>
+                  )}
+                </div>
+
+                {/* feature chips */}
+                <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-1.5 lg:justify-start" style={{ color: EMERALD, fontSize: "0.85rem", fontWeight: 600 }}>
+                  <span className="inline-flex items-center gap-1.5"><CheckCircle2 size={15} /> Lifetime access</span>
+                  <span className="inline-flex items-center gap-1.5"><CheckCircle2 size={15} /> Instant access</span>
+                  <span className="inline-flex items-center gap-1.5"><CheckCircle2 size={15} /> One-time payment</span>
+                </div>
+
+                {primaryCTA("Get access", "hero")}
+
+                <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-1 text-xs lg:justify-start" style={{ color: MUTE }}>
                   <span className="inline-flex items-center gap-1.5"><Lock size={13} /> Secure checkout</span>
                   <span className="inline-flex items-center gap-1.5"><FileText size={13} /> 41 pages · PDF</span>
                   <span className="inline-flex items-center gap-1.5"><Bot size={13} /> AI prompts included</span>
@@ -409,7 +429,7 @@ export default async function PlaybookLanding() {
                 ))}
               </ul>
 
-              <div className="mt-8 flex justify-center">{primaryCTA("Get instant access", "offer")}</div>
+              <div className="mt-8 flex justify-center">{primaryCTA("Get access", "offer")}</div>
               <div className="mt-4 flex items-center justify-center gap-4 text-xs" style={{ color: MUTE }}>
                 <span className="inline-flex items-center gap-1.5"><Lock size={13} /> Secure Razorpay checkout</span>
                 <span className="inline-flex items-center gap-1.5"><Zap size={13} /> Instant delivery</span>
@@ -448,7 +468,7 @@ export default async function PlaybookLanding() {
           <p style={{ marginTop: 12, color: "rgba(255,255,255,0.95)", fontSize: "1.05rem", maxWidth: 520, margin: "12px auto 0" }}>
             You hold the whole system in one download. Open it, tick one box, and start today.
           </p>
-          <div className="mt-8 flex justify-center">{primaryCTA("Get the Playbook now", "final")}</div>
+          <div className="mt-8 flex justify-center">{primaryCTA("Get access", "final")}</div>
         </div>
       </section>
 
@@ -467,7 +487,7 @@ export default async function PlaybookLanding() {
       </footer>
 
       {/* sticky mobile CTA (reused) */}
-      <StickyCTA slug={slug} priceNow={priceNow} priceStrike={priceStrike} />
+      <StickyCTA slug={slug} priceNow={priceNow} priceStrike={priceStrike} label="Get access" />
     </div>
   );
 }
