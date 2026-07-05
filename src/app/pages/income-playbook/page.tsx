@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import { Poppins } from "next/font/google";
 import {
   Sparkles, Rocket, Bot, LineChart, Wallet, Target, ShieldCheck,
-  CheckCircle2, Star, Lock, Zap, TrendingUp, FileText, Clock, HelpCircle,
+  CheckCircle2, Star, Lock, Zap, TrendingUp, Clock, HelpCircle,
 } from "lucide-react";
 import { getProductBySlug } from "@/lib/products";
 import { getSettings } from "@/lib/settings";
@@ -23,7 +23,7 @@ const poppins = Poppins({
 export const metadata: Metadata = {
   title: "How I Earned ₹4.6 Lakhs Last Month — The Digital Course Playbook",
   description:
-    "The exact step-by-step system behind a ₹4.6 lakh month selling one digital course — build it with AI, host it, run ads, and scale. 41-page playbook + prompts + launch checklist.",
+    "The exact step-by-step course behind a ₹4.6 lakh month selling one digital course — build it with AI, host it, run ads, and scale. Includes an AI prompt library for 15 niches + bonus templates & a launch checklist.",
 };
 
 /* ── palette (bold colorful gradient theme) ─────────────────────── */
@@ -61,9 +61,9 @@ const BENEFITS = [
 
 const FAQ = [
   { q: "I have no audience and no idea what to teach. Can I still do this?", a: "Yes — Part 3 walks you through finding a profitable topic from skills you already have, and the AI prompts design the whole course for you. Beginners are exactly who this is written for." },
-  { q: "Do I need to show my face or be good at tech?", a: "No. The playbook shows faceless formats (slides + voice, or a polished PDF) and uses no-code tools plus AI, so zero coding is required." },
+  { q: "Do I need to show my face or be good at tech?", a: "No. The course shows faceless formats (slides + voice, or text) and uses no-code tools plus AI, so zero coding is required." },
   { q: "Is this specific to trading or finance?", a: "No. The method works for any niche. The example course built inside is Personal Finance for Beginners, but you swap in your own topic anywhere." },
-  { q: "How is this delivered?", a: "Instantly. After payment you get the 41-page PDF playbook (with all prompts and the launch checklist) to download and keep for life." },
+  { q: "How is this delivered?", a: "Instantly. After payment you get lifetime access to the full course — every lesson, the AI prompt library, and all the bonus templates and checklists." },
   { q: "Will this really make me ₹4.6 lakhs?", a: "It's an honest system, not a guarantee. ₹4.6L was a real month that came after months of building and testing. Your results depend on your effort, niche, and execution — this compresses the learning curve, it doesn't delete it." },
 ];
 
@@ -103,7 +103,7 @@ export default async function PlaybookLanding() {
     <div className={poppins.className} style={{ background: INK, color: TEXT, minHeight: "100dvh", overflowX: "hidden" }}>
       <PixelEvent
         event="ViewContent"
-        params={{ content_name: "Digital Course Playbook", content_category: "Guide", value: finalPrice / 100, currency: "INR" }}
+        params={{ content_name: "Digital Course Playbook", content_category: "Course", value: finalPrice / 100, currency: "INR" }}
       />
 
       {/* ── Sticky header ─────────────────────────────────────────── */}
@@ -126,27 +126,27 @@ export default async function PlaybookLanding() {
         <div className="mx-auto max-w-6xl px-5 pb-14 pt-12 lg:pt-16">
           <div className="grid items-center gap-10 lg:grid-cols-[1.05fr_0.95fr]">
             {/* copy */}
-            <div className="text-left">
-              <span className="mb-5 inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-[11px] font-bold uppercase tracking-widest"
+            <div className="text-center lg:text-left">
+              <span className="mb-6 inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-[11px] font-bold uppercase tracking-widest"
                 style={{ background: "rgba(251,191,36,0.12)", color: AMBER, border: `1px solid rgba(251,191,36,0.35)` }}>
                 <Sparkles size={14} /> The Digital Course Playbook
               </span>
 
-              <h1 style={{ fontWeight: 900, fontSize: "clamp(1.95rem,5.2vw,3.4rem)", lineHeight: 1.06, letterSpacing: "-0.02em", color: "#fff" }}>
+              <h1 style={{ fontWeight: 900, fontSize: "clamp(1.95rem,5.2vw,3.4rem)", lineHeight: 1.08, letterSpacing: "-0.02em", color: "#fff" }}>
                 How I Earned<br />
                 <span style={{ background: G_TEXT, WebkitBackgroundClip: "text", backgroundClip: "text", WebkitTextFillColor: "transparent", color: AMBER, filter: "drop-shadow(0 2px 14px rgba(245,158,11,0.35))" }}>
                   ₹4.6 Lakhs
                 </span><br />Last Month
               </h1>
-              <p style={{ marginTop: 14, fontSize: "clamp(1.1rem,2.5vw,1.35rem)", fontWeight: 700, color: "#fff", lineHeight: 1.35 }}>
+              <p style={{ marginTop: 18, fontSize: "clamp(1.1rem,2.5vw,1.35rem)", fontWeight: 700, color: "#fff", lineHeight: 1.4 }}>
                 selling <span style={{ color: AMBER }}>ONE</span> digital course — built with AI.
               </p>
-              <p style={{ marginTop: 12, fontSize: "1.08rem", lineHeight: 1.5, color: MUTE, maxWidth: 440 }}>
+              <p className="mx-auto lg:mx-0" style={{ marginTop: 14, fontSize: "1.08rem", lineHeight: 1.55, color: MUTE, maxWidth: 440 }}>
                 Build it with AI. Launch in 14 days. Get paid — <strong style={{ color: TEXT }}>even starting from zero.</strong>
               </p>
 
               {/* ── offer block ── */}
-              <div className="mt-7 flex flex-col items-start gap-4">
+              <div className="mt-9 flex flex-col items-center gap-6 lg:items-start">
                 {/* social proof */}
                 <div className="flex items-center gap-2 text-sm">
                   <span style={{ color: AMBER, letterSpacing: "1.5px" }}>★★★★★</span>
@@ -154,7 +154,7 @@ export default async function PlaybookLanding() {
                 </div>
 
                 {/* price */}
-                <div className="flex items-end justify-start gap-3" style={{ flexWrap: "wrap" }}>
+                <div className="flex items-end justify-center gap-3 lg:justify-start" style={{ flexWrap: "wrap" }}>
                   <span style={{ fontWeight: 900, fontSize: "clamp(2.2rem,6vw,2.7rem)", color: "#fff", lineHeight: 0.95 }}>{priceNow}</span>
                   <span style={{ fontSize: "1.1rem", color: MUTE, textDecoration: "line-through", paddingBottom: 5 }}>{priceStrike}</span>
                   {savePct > 0 && (
@@ -164,19 +164,17 @@ export default async function PlaybookLanding() {
                   )}
                 </div>
 
-                {/* feature chips */}
-                <div className="flex flex-wrap items-center justify-start gap-x-4 gap-y-1.5" style={{ color: EMERALD, fontSize: "0.85rem", fontWeight: 600 }}>
-                  <span className="inline-flex items-center gap-1.5"><CheckCircle2 size={15} /> Lifetime access</span>
-                  <span className="inline-flex items-center gap-1.5"><CheckCircle2 size={15} /> Instant access</span>
-                  <span className="inline-flex items-center gap-1.5"><CheckCircle2 size={15} /> One-time payment</span>
+                {/* two feature ticks */}
+                <div className="flex items-center justify-center gap-x-6 gap-y-2 lg:justify-start" style={{ color: EMERALD, fontSize: "0.95rem", fontWeight: 700 }}>
+                  <span className="inline-flex items-center gap-2"><CheckCircle2 size={17} /> AI Prompts</span>
+                  <span className="inline-flex items-center gap-2"><CheckCircle2 size={17} /> Lifetime Access</span>
                 </div>
 
                 {primaryCTA("Get access", "hero")}
 
-                <div className="flex flex-wrap items-center justify-start gap-x-4 gap-y-1 text-xs" style={{ color: MUTE }}>
+                <div className="flex items-center justify-center gap-x-5 text-xs lg:justify-start" style={{ color: MUTE }}>
                   <span className="inline-flex items-center gap-1.5"><Lock size={13} /> Secure checkout</span>
-                  <span className="inline-flex items-center gap-1.5"><FileText size={13} /> 41 pages · PDF</span>
-                  <span className="inline-flex items-center gap-1.5"><Bot size={13} /> AI prompts included</span>
+                  <span className="inline-flex items-center gap-1.5"><Zap size={13} /> Instant access</span>
                 </div>
               </div>
             </div>
@@ -222,8 +220,8 @@ export default async function PlaybookLanding() {
         <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-center gap-x-8 gap-y-3 px-5 py-4 text-center">
           {[
             { n: "5,600+", l: "students started" },
-            { n: "41", l: "pages of pure system" },
-            { n: "8", l: "copy-paste AI prompts" },
+            { n: "15", l: "step-by-step lessons" },
+            { n: "45+", l: "copy-paste AI prompts" },
             { n: "14 days", l: "to launch" },
           ].map((s) => (
             <div key={s.l} className="flex items-baseline gap-2">
@@ -406,25 +404,30 @@ export default async function PlaybookLanding() {
             <div className="rounded-[22px] px-6 py-9 text-center sm:px-10" style={{ background: INK }}>
               <span style={{ color: AMBER, fontWeight: 800, letterSpacing: "0.16em", textTransform: "uppercase", fontSize: "0.72rem" }}>Launch offer</span>
               <h2 style={{ marginTop: 8, fontWeight: 900, fontSize: "clamp(1.6rem,4vw,2.3rem)", color: "#fff", letterSpacing: "-0.02em" }}>
-                Get the entire playbook today
+                Get the full course + bonuses today
               </h2>
 
               <div className="mt-6 flex items-end justify-center gap-3">
                 <span style={{ fontWeight: 900, fontSize: "3rem", lineHeight: 1, color: "#fff" }}>{priceNow}</span>
                 <span style={{ fontSize: "1.2rem", color: MUTE, textDecoration: "line-through", paddingBottom: 8 }}>{priceStrike}</span>
               </div>
-              <div style={{ marginTop: 8, color: EMERALD, fontWeight: 700, fontSize: "0.9rem" }}>One-time payment · Lifetime access · Instant download</div>
+              <div style={{ marginTop: 8, color: EMERALD, fontWeight: 700, fontSize: "0.9rem" }}>One-time payment · Lifetime access · Instant access</div>
 
               <ul className="mx-auto mt-7 max-w-md space-y-2.5 text-left">
                 {[
-                  "The full 41-page playbook (PDF)",
-                  "8 copy-paste AI prompts (the Prompt Vault)",
-                  "The 14-day launch checklist",
-                  "The exact funnel, pricing & ad system",
-                  "Free lifetime updates",
+                  { t: "The complete step-by-step course — build → launch → scale", bonus: false },
+                  { t: "AI Prompt Library — ready prompts for 15 niches", bonus: false },
+                  { t: "Landing-page & sales-copy templates", bonus: true },
+                  { t: "Ad creative & script swipe file", bonus: true },
+                  { t: "The 14-day launch checklist", bonus: true },
+                  { t: "Lifetime access + all future updates", bonus: false },
                 ].map((f) => (
-                  <li key={f} className="flex items-start gap-2.5" style={{ color: TEXT, fontSize: "0.95rem" }}>
-                    <CheckCircle2 size={19} color={EMERALD} style={{ flexShrink: 0, marginTop: 1 }} /> {f}
+                  <li key={f.t} className="flex items-start gap-2.5" style={{ color: TEXT, fontSize: "0.95rem" }}>
+                    <CheckCircle2 size={19} color={EMERALD} style={{ flexShrink: 0, marginTop: 1 }} />
+                    <span>
+                      {f.bonus && <strong style={{ color: AMBER }}>BONUS: </strong>}
+                      {f.t}
+                    </span>
                   </li>
                 ))}
               </ul>
@@ -466,7 +469,7 @@ export default async function PlaybookLanding() {
             The only difference between<br />you and me is that I <span style={{ color: "#0B0713" }}>started.</span>
           </h2>
           <p style={{ marginTop: 12, color: "rgba(255,255,255,0.95)", fontSize: "1.05rem", maxWidth: 520, margin: "12px auto 0" }}>
-            You hold the whole system in one download. Open it, tick one box, and start today.
+            You get the whole system the moment you join — the course, the prompts, and every bonus. Start today.
           </p>
           <div className="mt-8 flex justify-center">{primaryCTA("Get access", "final")}</div>
         </div>
