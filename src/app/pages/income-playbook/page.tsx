@@ -139,7 +139,7 @@ export default async function PlaybookLanding() {
                 </span><br />Last Month
               </h1>
               <p style={{ marginTop: 18, fontSize: "clamp(1.1rem,2.5vw,1.35rem)", fontWeight: 700, color: "#fff", lineHeight: 1.4 }}>
-                selling <span style={{ color: AMBER }}>ONE</span> digital course — built with AI.
+                Selling <span style={{ color: AMBER }}>ONE</span> digital course — built with AI.
               </p>
               <p className="mx-auto lg:mx-0" style={{ marginTop: 14, fontSize: "1.08rem", lineHeight: 1.55, color: MUTE, maxWidth: 440 }}>
                 Build it with AI. Launch in 14 days. Get paid — <strong style={{ color: TEXT }}>even starting from zero.</strong>
