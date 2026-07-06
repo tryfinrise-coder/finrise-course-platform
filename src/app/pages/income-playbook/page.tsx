@@ -157,8 +157,8 @@ export default async function PlaybookLanding() {
                   <span style={{ color: MUTE }}><strong style={{ color: "#fff" }}>6,300+</strong> students loved it</span>
                 </div>
 
-                {/* price */}
-                <div className="flex items-end justify-center gap-3 lg:justify-start" style={{ flexWrap: "wrap" }}>
+                {/* price — mobile only (laptop shows it on the CTA buttons) */}
+                <div className="flex items-end justify-center gap-3 lg:hidden" style={{ flexWrap: "wrap" }}>
                   <span style={{ fontWeight: 900, fontSize: "clamp(2.2rem,6vw,2.7rem)", color: "#fff", lineHeight: 0.95 }}>{priceNow}</span>
                   <span style={{ fontSize: "1.1rem", color: MUTE, textDecoration: "line-through", paddingBottom: 5 }}>{priceStrike}</span>
                   {savePct > 0 && (
