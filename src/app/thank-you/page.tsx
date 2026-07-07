@@ -12,15 +12,17 @@ export const metadata: Metadata = {
 export default function ThankYouPage({
   searchParams,
 }: {
-  searchParams: { amount?: string };
+  searchParams: { amount?: string; eid?: string };
 }) {
   const amount = Number(searchParams.amount || 199);
   return (
     <div className="flex min-h-dvh flex-col bg-background text-foreground">
-      {/* Purchase event fires once when buyer reaches this page */}
+      {/* Purchase event fires once when buyer reaches this page. eventId (the
+          Razorpay order id) is shared with the server CAPI event for dedup. */}
       <PixelEvent
         event="Purchase"
-        params={{ value: amount, currency: "INR", content_name: "Candlestick Mastery" }}
+        params={{ value: amount, currency: "INR", content_name: "Finrise" }}
+        eventId={searchParams.eid}
       />
       {/* Minimal header */}
       <header className="border-b border-border bg-card">

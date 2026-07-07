@@ -144,7 +144,9 @@ export default function CheckoutButton({
             const j = await v.json();
             if (j.ok) {
               const rupees = Math.round(data.amount / 100);
-              window.location.href = `/thank-you?amount=${rupees}`;
+              // Pass the order id as the dedup event id for the browser Purchase.
+              const eid = encodeURIComponent(resp?.razorpay_order_id ?? "");
+              window.location.href = `/thank-you?amount=${rupees}&eid=${eid}`;
             } else {
               setError("Payment could not be verified.");
               setLoading(false);

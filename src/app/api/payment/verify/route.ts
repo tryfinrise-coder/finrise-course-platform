@@ -6,6 +6,7 @@ import { grantEntitlement } from "@/lib/entitlements";
 import { generatePassword } from "@/lib/passwords";
 import { getProductById } from "@/lib/products";
 import { sendCredentialsEmail } from "@/lib/email";
+import { sendCapiEvent } from "@/lib/metaCapi";
 
 export const runtime = "nodejs";
 
@@ -30,6 +31,27 @@ export async function POST(req: NextRequest) {
       if (purchase?.email) {
         const product = purchase.product_id ? await getProductById(purchase.product_id) : undefined;
         const productTitle = product?.title || "your Finrise course";
+
+        // Meta Conversions API — fire the server-side Purchase the instant the
+        // payment is verified (independent of the browser pixel). Deduped with
+        // the browser Purchase via event_id = the Razorpay order id.
+        const fwd = req.headers.get("x-forwarded-for");
+        await sendCapiEvent({
+          eventName: "Purchase",
+          eventId: razorpay_order_id,
+          eventSourceUrl: req.headers.get("referer"),
+          value: purchase.amount / 100,
+          currency: "INR",
+          contentName: product?.title ?? null,
+          user: {
+            email: purchase.email,
+            phone: purchase.phone,
+            ip: purchase.ip || (fwd ? fwd.split(",")[0].trim() : req.headers.get("x-real-ip")),
+            userAgent: req.headers.get("user-agent"),
+            fbp: req.cookies.get("_fbp")?.value ?? null,
+            fbc: req.cookies.get("_fbc")?.value ?? null,
+          },
+        });
 
         let user = await findUserByEmail(purchase.email);
         let isNew = false;
